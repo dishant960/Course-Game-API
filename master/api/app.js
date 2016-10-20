@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var MongoClient = require('mongodb').MongoClient;
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var courses = require('./routes/courses');
+var temp = require('./routes/temp');
 
 var app = express();
 
@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/courses', courses);
+app.use('/temp', temp);
 /*
 // connection with mongo database....
 MongoClient.connect("mongodb://dishant:123456@ds053196.mlab.com:53196/coursegame", function(err, db) {
