@@ -1,23 +1,23 @@
 var express = require('express');
 var MongoClient = require('mongodb').MongoClient;
 var router = express.Router();
-var userSchema = require('../models/userSchema');
+var schema = require('../models/courseSchema');
 var connectionString = "mongodb://dishant:123456@ds053196.mlab.com:53196/coursegame";
 var ObjectId = require('mongodb').ObjectID;
 
-// localhost:3000/users
+// localhost:3000/courses
 router.get('/', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
-      var collection = db.collection('User');
-      collection.find().toArray(function(err, users) {
+      var collection = db.collection('Course');
+      collection.find().toArray(function(err, record) {
         if (err) {
           res.status(500);
     		  res.json({"Status":false,"Result":err});
         }
         else {
           res.status(200);
-          res.send({"Status":true,"Result":users});
+          res.send({"Status":true,"Result":record});
         }
       });
     }
@@ -25,21 +25,21 @@ router.get('/', function(req, res, next) {
 });
 
 
-// localhost:3000/users/getById/:id
+// localhost:3000/courses/getById/:id
 router.get('/getById/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
-      var collection = db.collection('User');
+      var collection = db.collection('Course');
       var id = req.params.id;
 
-      collection.findOne({"_id": new ObjectId(id)}, function(err, user) {
+      collection.findOne({"_id": new ObjectId(id)}, function(err, record) {
         if (err) {
           res.status(500);
     		  res.json({"Status":false,"Result":err});
         }
         else {
           res.status(200);
-          res.send({"Status":true,"Result":user});
+          res.send({"Status":true,"Result":record});
         }
       });
     }
@@ -47,52 +47,20 @@ router.get('/getById/:id',function(req, res, next){
 });
 
 
-// localhost:3000/users/authenticate
-router.post('/login',function(req, res, next){
+// localhost:3000/courses/insert
+router.post('/insert',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
-      var collection = db.collection('User');
-      var email = req.body.email;
-      var password = req.body.password;
-
-      collection.findOne({"email": email, "password": password}, function(err, user) {
-        if (err) {
-          res.status(500);
-    		  res.json({"Status":false,"Result":err});
-        }
-        else {
-          if(!user) {
-            res.status(404);
-            res.send({"Status":false,"Result":"Authentication failed. User not found."});
-          }
-          else {
-            res.status(200);
-            res.send({"Status":true,"Result":user});
-          }
-        }
-      });
-    }
-  });
-});
-
-
-// localhost:3000/users/insert
-router.post('/register',function(req, res, next){
-  MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
-      var collection = db.collection('User');
-      var user = req.body;
+      var collection = db.collection('Course');
 
     	collection.insert({
         name: req.body.name,
-        type: req.body.type,
-        programme: req.body.programme,
+        tag: req.body.tag,
+        semester: req.body.semester,
         year: req.body.year,
-        webmailId: req.body.webmailId,
-        institute: req.body.institute,
-        username: req.body.username,
-        password: req.body.password,
-        contact: req.body.contact
+        programme: req.body.programme,
+        desc: req.body.desc,
+        userId: ObjectId(req.body.uid)
       }, function(err, user) {
     		if (err) {
           res.status(500);
@@ -100,7 +68,7 @@ router.post('/register',function(req, res, next){
         }
         else {
           res.status(200);
-          res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": user.ops[0]});
+          res.send({"Status":true,"Result":"Record inserted successfully.", "insertedRecord": user.ops[0]});
         }
       });
     }
@@ -108,19 +76,19 @@ router.post('/register',function(req, res, next){
 });
 
 
-// localhost:3000/users/update/:id
+// localhost:3000/courses/update/:id
 router.put('/update/:id', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
-      var collection = db.collection('User');
+      var collection = db.collection('Course');
       var id = req.params.id;
       var updatedUser = req.body;
 
       console.log(id);
-      console.log(updatedUser);
+      console.log(updatedRecord);
       collection.findAndModify(
         {_id: ObjectId(id)},
-        {$set: updatedUser},
+        {$set: updatedRecord},
         function(err, object) {
             if (err){
                 res.status(500);
@@ -134,11 +102,11 @@ router.put('/update/:id', function(req, res, next){
   });
 });
 
-// localhost:3000/users/delete/:id
+// localhost:3000/courses/delete/:id
 router.delete('/delete/:id', function(req,res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
-      var collection = db.collection('User');
+      var collection = db.collection('Course');
       var id = req.params.id;
 
       console.log(id);
