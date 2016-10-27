@@ -1,6 +1,13 @@
 app.controller("registerctrl",function($scope,$resource,$state){
    
+  
+
+
+   $scope.redirect = function(){
+   window.location = "registration.html";
+   }
    
+
     $scope.submit=function()
     {
         

@@ -1,0 +1,10 @@
+{
+    "jscodehints.detectedExclusions": [
+        "/home/dishant960/Game1/lib/webgl-0.8.2.min.js",
+        "/home/dishant960/Game1/lib/easeljs-0.8.2.min.js",
+        "C:/Users/disha/Desktop/Game1/lib/webgl-NEXT.min.js",
+        "C:/Users/disha/Desktop/Game1/lib/webgl-NEXT.combined.js",
+        "C:/Users/disha/Desktop/Game1/lib/webgl-0.8.2.min.js",
+        "C:/Users/disha/Desktop/Game1/lib/webgl-0.8.2.combined.js"
+    ]
+}

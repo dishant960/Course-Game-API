@@ -16,6 +16,16 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+
+var header = function(request,response, next){
+  response.header("Access-Control-Allow-Origin",'*');
+  response.header("Access-Control-Allow-Methods",'GET,POST,PUT,DELETE');
+  response.header("Access-Control-Allow-Headers",'Content-Type, x-access-token');
+  next();
+}
+
+app.use(header);
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));

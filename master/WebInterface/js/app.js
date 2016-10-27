@@ -1,10 +1,10 @@
 var app=angular.module("myApp",['ui.router','ngResource']);
-app.config(function($stateProvider, $urlRouterProvider) {
+app.config(function($stateProvider, $urlRouterProvider,$resourceProvider) {
     
     $stateProvider
         .state('login', {
             url: '/login',
-            templateUrl: 'login.html',
+            templateUrl: 'login/login.html',
             controller:'loginctrl'
         })
         .state('register',{
@@ -14,5 +14,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     })
         
         $urlRouterProvider.otherwise('/login');
+
+        $resourceProvider.defaults.stripTrailingSlashes = false;
         
 });
+
+app.config(['$resourceProvider', function($resourceProvider) {
+  // Don't strip trailing slashes from calculated URLs
+  $resourceProvider.defaults.stripTrailingSlashes = false;
+}]);
