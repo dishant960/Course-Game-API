@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>EaselJS demo: Dragging</title>
+	<link href="../_shared/demo.css" rel="stylesheet" type="text/css">
+	<script src="http://code.createjs.com/easeljs-0.8.1.min.js"></script>
+	<script>
+		var stage, output;
+		
+		function init() {
+			stage = new createjs.Stage("demoCanvas");
+			
+			// this lets our drag continue to track the mouse even when it leaves the canvas:
+			// play with commenting this out to see the difference.
+			stage.mouseMoveOutside = true; 
+
+			// to draw an array...
+
+			var g = new createjs.Graphics();
+			g.beginStroke(createjs.Graphics.getRGB(0,0,0));
+			
+			g.drawRect(0,0,70,70);
+			g.drawRect(75,0,70,70);
+			g.drawRect(150,0,70,70);
+			g.drawRect(225,0,70,70);
+			g.drawRect(300,0,70,70);
+						
+			var s = new createjs.Shape(g);
+			s.x = 100;
+			s.y = 100;
+			
+			stage.addChild(s);
+			
+			stage.update();
+			
+			
+			// to draw a circle for the top
+			
+			var top = new createjs.Shape();
+			top.graphics.beginFill("#000000").drawCircle(-50, -50, 20);
+			
+			var lbl_top = new createjs.Text("Top", "bold 14px Arial", "#FFFFFF");
+			lbl_top.textAlign = "center";
+			lbl_top.y = -57;
+			lbl_top.x = -50;
+			
+			
+			
+			// to draw a circle for an elements
+			
+			var element1 = new createjs.Shape();
+			element1.graphics.beginFill("red").drawCircle(30, -50, 20);
+			
+			var lbl_e1 = new createjs.Text("5", "bold 14px Arial", "#FFFFFF");
+			lbl_e1.textAlign = "center";
+			lbl_e1.y = -57;
+			lbl_e1.x = 30;
+			
+			
+			var element2 = new createjs.Shape();
+			element2.graphics.beginFill("red").drawCircle(80, -50, 20);
+			
+			var lbl_e2 = new createjs.Text("10", "bold 14px Arial", "#FFFFFF");
+			lbl_e2.textAlign = "center";
+			lbl_e2.y = -57;
+			lbl_e2.x = 80;
+			
+			
+			var element3 = new createjs.Shape();
+			element3.graphics.beginFill("red").drawCircle(130, -50, 20);
+			
+			var lbl_e3 = new createjs.Text("2", "bold 14px Arial", "#FFFFFF");
+			lbl_e3.textAlign = "center";
+			lbl_e3.y = -57;
+			lbl_e3.x = 130;
+			
+			
+			var element4 = new createjs.Shape();
+			element4.graphics.beginFill("red").drawCircle(180, -50, 20);
+			
+			var lbl_e4 = new createjs.Text("13", "bold 14px Arial", "#FFFFFF");
+			lbl_e4.textAlign = "center";
+			lbl_e4.y = -57;
+			lbl_e4.x = 180;
+			
+			
+			var element5 = new createjs.Shape();
+			element5.graphics.beginFill("red").drawCircle(230, -50, 20);
+			
+			var lbl_e5 = new createjs.Text("8", "bold 14px Arial", "#FFFFFF");
+			lbl_e5.textAlign = "center";
+			lbl_e5.y = -57;
+			lbl_e5.x = 230;
+			
+			
+			
+			stage.update();
+
+			// code to drag the object
+			
+			var dragger = new createjs.Container();
+			dragger.x = dragger.y = 100;
+			dragger.addChild(top, lbl_top);
+			stage.addChild(dragger);
+			
+			dragger.on("pressmove",function(evt) {
+				// currentTarget will be the container that the event listener was added to:
+				evt.currentTarget.x = evt.stageX;
+				evt.currentTarget.y = evt.stageY;
+				// make sure to redraw the stage to show the change:
+				stage.update();   
+			});
+			
+			stage.update();
+			
+			
+			var dragger = new createjs.Container();
+			dragger.x = dragger.y = 100;
+			dragger.addChild(element1, lbl_e1);
+			stage.addChild(dragger);
+			
+			dragger.on("pressmove",function(evt) {
+				// currentTarget will be the container that the event listener was added to:
+				evt.currentTarget.x = evt.stageX;
+				evt.currentTarget.y = evt.stageY;
+				// make sure to redraw the stage to show the change:
+				stage.update();   
+			});
+			
+			stage.update();
+			
+			
+			var dragger = new createjs.Container();
+			dragger.x = dragger.y = 100;
+			dragger.addChild(element2, lbl_e2);
+			stage.addChild(dragger);
+			
+			dragger.on("pressmove",function(evt) {
+				// currentTarget will be the container that the event listener was added to:
+				evt.currentTarget.x = evt.stageX;
+				evt.currentTarget.y = evt.stageY;
+				// make sure to redraw the stage to show the change:
+				stage.update();   
+			});
+			
+			stage.update();
+			
+			
+			var dragger = new createjs.Container();
+			dragger.x = dragger.y = 100;
+			dragger.addChild(element3, lbl_e3);
+			stage.addChild(dragger);
+			
+			dragger.on("pressmove",function(evt) {
+				// currentTarget will be the container that the event listener was added to:
+				evt.currentTarget.x = evt.stageX;
+				evt.currentTarget.y = evt.stageY;
+				// make sure to redraw the stage to show the change:
+				stage.update();   
+			});
+			
+			stage.update();
+			
+			
+			var dragger = new createjs.Container();
+			dragger.x = dragger.y = 100;
+			dragger.addChild(element4, lbl_e4);
+			stage.addChild(dragger);
+			
+			dragger.on("pressmove",function(evt) {
+				// currentTarget will be the container that the event listener was added to:
+				evt.currentTarget.x = evt.stageX;
+				evt.currentTarget.y = evt.stageY;
+				// make sure to redraw the stage to show the change:
+				stage.update();   
+			});
+			
+			stage.update();
+			
+			
+			var dragger = new createjs.Container();
+			dragger.x = dragger.y = 100;
+			dragger.addChild(element5, lbl_e5);
+			stage.addChild(dragger);
+			
+			dragger.on("pressmove",function(evt) {
+				// currentTarget will be the container that the event listener was added to:
+				evt.currentTarget.x = evt.stageX;
+				evt.currentTarget.y = evt.stageY;
+				// make sure to redraw the stage to show the change:
+				stage.update();   
+			});
+			
+			top.on("click", function() {
+				alert("clicked" + top.x);
+			});
+			
+			stage.update();
+			
+		}
+	</script>
+</head>
+<body onload="init();">
+	<canvas id="demoCanvas" width="1000" height="500">
+		alternate content
+	</canvas>
+</body>
+</html>
