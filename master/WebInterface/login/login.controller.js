@@ -15,7 +15,7 @@ app.controller("loginctrl",function($scope,$resource,$state,$http){
         console.log($scope.user);
 
         //$scope.user = { "username" : "bjscdb", "password" : "25"};
-        var a=$resource("http://localhost:3000/users/login");
+        var a=$resource("https://shielded-tor-32602.herokuapp.com/users/login");
 
         a.save($scope.user,function(res){
             console.log(res.Status);
