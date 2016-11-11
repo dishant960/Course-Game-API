@@ -15,9 +15,13 @@ app.controller("loginctrl",function($scope,$resource,$state,$http,$location){
             console.log(res.Status);
 
             if(res.Status == false){
+                    
                 alert("Please check username and password");
             }else{
                 alert("Successful");
+
+                $state.go('addGame');
+
             }
         });
 
