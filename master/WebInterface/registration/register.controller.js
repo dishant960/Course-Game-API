@@ -1,32 +1,17 @@
-app.controller("registerctrl",function($scope,$resource,$state){
+app.controller("registerctrl",function($scope,$resource,$state,$http,$location){
    
-  
-
-
-   $scope.redirect = function(){
-   window.location = "registration.html";
-   }
-   
-
-    $scope.submit=function()
+       
+    $scope.redirect=function()
     {
-        
+        var user = $scope.faculty;
+        //$scope.user = { "username" : "bjscdb", "password" : "25"};
+        var a=$resource("https://shielded-tor-32602.herokuapp.com/users/register");
 
-         vm.register = register;
-
-        function register() {
-            vm.dataLoading = true;
-            UserService.Create(vm.user)
-                .then(function (response) {
-                    if (response.success) {
-                        FlashService.Success('Registration successful', true);
-                        $location.path('/login');
-                    } else {
-                        FlashService.Error(response.message);
-                        vm.dataLoading = false;
-                    }
-                });
-        }
+        a.save($scope.user,function(res){
+         //   console.log(res.Status);
         
+            $location.path('/registration/registration.html');
+        });
+
     }
-});
+    });

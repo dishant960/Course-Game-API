@@ -7,11 +7,11 @@
         <button ng-click="submit()">Cancel</button>
         
 </div> -->
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<!-- <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%> -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<title>Library System</title>
+<title>Course Game</title>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
@@ -27,55 +27,43 @@
         <div class="col-xs-12 col-sm-8 col-md-4 col-sm-offset-2 col-md-offset-4">
         	<div class="panel panel-default">
         		<div class="panel-heading" >
-			    		<h3 class="panel-title">Please sign up for Library System</h3>
+			    		<h3 class="panel-title">Sign Up...</h3>
 			 			</div>
 			 			<div class="panel-body">
-			    		<form role="form">
-			    			<div class="row">
-			    				<div class="col-xs-6 col-sm-6 col-md-6">
-			    					<div class="form-group">
-			                <input type="text" name="first_name" id="first_name" class="form-control input-sm" placeholder="First Name" required value="">
-			    					</div>
-			    				</div>
-			    				<div class="col-xs-6 col-sm-6 col-md-6">
-			    					<div class="form-group">
-			    						<input type="text" name="last_name" id="last_name" class="form-control input-sm" placeholder="Last Name" required value="">
-			    					</div>
-			    				</div>
+			    		<div role="form">
+			    			
+			    			<div class="form-group">
+			    				<input type="text" name="Name" id="fname" class="form-control input-sm" placeholder="Firstname" 
+			    				ng-model="faculty.fname">
 			    			</div>
+
+                <div class="form-group">
+                  <input type="text" name="Name" id="fname" class="form-control input-sm" placeholder="Lastname" 
+                  ng-model="faculty.lname">
+                </div>
+
+                <input type="hidden" id="utype" value="faculty" ng-model="faculty.usertype">
 
 			    			<div class="form-group">
-			    				<input type="email" name="email" id="email" class="form-control input-sm" placeholder="Email Address">
+			    				<input type="email" name="email" id="email" class="form-control input-sm" placeholder="Email Address" ng-model="faculty.mail">
 			    			</div>
 
-			    			<div class="row">
-			    				<div class="col-xs-6 col-sm-6 col-md-6">
-			    					<div class="form-group">
-			    						<input type="password" name="password" id="password" class="form-control input-sm" placeholder="Password">
-			    					</div>
-			    				</div>
-			    				<div class="col-xs-6 col-sm-6 col-md-6">
-			    					<div class="form-group">
-			    						<input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-sm" placeholder="Confirm Password">
-			    					</div>
-			    				</div>
-			    			</div>
 			    			
-			    			<div class="row">
-			    				<div class="col-xs-6 col-sm-6 col-md-6">
 			    					<div class="form-group">
-			                <input type="text" name="roll_no" id="roll_no" class="form-control input-sm" placeholder="Roll Number" required value="">
+			    						<input type="password" name="password" id="password" class="form-control input-sm" placeholder="Password" ng-model="faculty.password">
 			    					</div>
-			    				</div>
-			    				<div class="col-xs-6 col-sm-6 col-md-6">
-<!-- 			    					<div class="form-group"> -->
-<!-- 			    						<input type="text" name="last_name" id="last_name" class="form-control input-sm" placeholder="Last Name"> -->
-<!-- 			    					</div> -->
-			    				</div>
-			    			</div>
-			  				<div class="row">
+
+                    <div class="form-group">
+						<input type="text" id="UserMobile" maxlength="14" data-fv-numeric="true" data-fv-numeric-message="Please enter valid phone numbers" data-fv-phone-country11="IN" required="required" data-fv-notempty-message="This field cannot be left blank." placeholder="Contact No. " class="form-control" name="data[User][mobile]" data-fv-field="data[User][mobile]">
+                    </div>
+			    			
+                <div class="form-group">
+                <input type="text" name="spl" id="spl" class="form-control input-sm" placeholder="Specialization" ng-model="faculty.spl">
+              </div>
+			    			
+			  	<input type="Usertype" name="password" id="password" class="form-control input-sm" placeholder="Password" ng-model="faculty.password">
 						
-			<div class="col-sm-6">
+			<div class="col-sm-12">
 				 <div class="form-group" style="margin-bottom: 25px;">
                       <div class="dropdown">
     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Program&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -83,34 +71,61 @@
     <ul class="dropdown-menu">
     
       <li><a href="#">Msc(IT)</a></li>
-      <li><a href="#">MCA</a></li>
-      <li><a href="#">MCA Integrated</a></li>
-      <li><a href="#">PGDCA</a></li>
+      <li><a href="#">Btech</a></li>
+      <li><a href="#">Mdes Integrated</a></li>
+      <li><a href="#">Mtech</a></li>
   </ul>
   </div>              
             </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-12">
 				 <div class="form-group" style="margin-bottom: 25px;">
                       <div class="dropdown">
     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Acedemic Year
     <span class="caret"></span></button>
     <ul class="dropdown-menu">
-    
-      <li><a href="#">2010</a></li>
-      <li><a href="#">2011</a></li>
+
+
        <li><a href="#">2012</a></li>
         <li><a href="#">2013</a></li>
          <li><a href="#">2014</a></li>
           <li><a href="#">2015</a></li>
            <li><a href="#">2016</a></li>
-           
+
   </ul>
-  </div>              
+  </div>
             </div>
             </div>
             </div>
-			    			<input type="submit" value="Register" class="btn btn-info btn-block">
+							<div class="col-sm-12">
+								<div class="form-group" style="margin-bottom: 25px;">
+									<div class="dropdown" style="margin-left: -15px;">
+										<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Semester
+											<span class="caret"></span></button>
+										<ul class="dropdown-menu">
+
+
+											<li><a href="#">Sem-I</a></li>
+											<li><a href="#">Sem-II</a></li>
+											<li><a href="#">Sem-III</a></li>
+											<li><a href="#">Sem-IV</a></li>
+											<li><a href="#">Sem-V</a></li>
+											<li><a href="#">Sem-VI</a></li>
+											<li><a href="#">Sem-VII</a></li>
+											<li><a href="#">Sem-VIII</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+							</div>
+
+
+							<div class="form-group">
+								<input type="text" name="number" id="number" class="form-control input-sm" placeholder="Student-Id" ng-model="faculty.mail">
+							</div>
+
+
+							<input type="submit" value="Register" class="btn btn-info btn-block" ng-click="submit()">
 			    		
 			    		</form>
 			    	</div>

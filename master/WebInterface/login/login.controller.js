@@ -1,13 +1,7 @@
 
 
-app.controller("loginctrl",function($scope,$resource,$state,$http){
+app.controller("loginctrl",function($scope,$resource,$state,$http,$location){
    
-   
-
-
-
-
-
        
     $scope.submit=function()
     {
@@ -32,6 +26,12 @@ app.controller("loginctrl",function($scope,$resource,$state,$http){
         //     console.log(res);
         // });
     }
+
+    $scope.redirect = function(){
+
+        $state.go('register');
+    }
+
   // $http.get("https://blooming-springs-95211.herokuapp.com/users/login").then(function (response) {
   //     $scope.myData = response.data;
       
