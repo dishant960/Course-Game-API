@@ -12,8 +12,13 @@ app.config(function($stateProvider, $urlRouterProvider,$resourceProvider) {
         templateUrl: 'registration.html',
         controller: 'registerctrl'
     })
+        .state('addGame',{
+        url: '/addGame',
+        templateUrl: 'addGame/addGame.html',
+        controller: 'addGamectrl'
+    })
         
-        $urlRouterProvider.otherwise('/login');
+        //$urlRouterProvider.otherwise('/login');
 
         $resourceProvider.defaults.stripTrailingSlashes = false;
         
