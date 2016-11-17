@@ -2,6 +2,7 @@ var express = require('express');
 var MongoClient = require('mongodb').MongoClient;
 var router = express.Router();
 var schema = require('../models/courseSchema');
+var tagSchema = require('../models/tagSchema');
 var connectionString = "mongodb://dishant:123456@ds053196.mlab.com:53196/coursegame";
 var ObjectId = require('mongodb').ObjectID;
 
@@ -22,6 +23,22 @@ router.get('/', function(req, res, next) {
   });
 });
 
+// localhost:3000/courses/tags
+router.get('/tags', function(req, res, next) {
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('Tag');
+      collection.find().toArray(function(err, record) {
+        if (err) {
+    		  res.json({"Status":false,"Result":err});
+        }
+        else {
+          res.send({"Status":true,"Result":record});
+        }
+      });
+    }
+  });
+});
 
 // localhost:3000/courses/getById/:id
 router.get('/getById/:id',function(req, res, next){
@@ -43,28 +60,87 @@ router.get('/getById/:id',function(req, res, next){
 });
 
 
+// localhost:3000/courses/tags/insert
+router.post('/tags/insert',function(req, res, next){
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('Tag');
+
+    	collection.insert({
+        name: req.body.name
+      }, function(err, tag) {
+    		if (err) {
+    		  res.json({"Status":false,"Result":err});
+        }
+        else {
+          res.send({"Status":true,"Result":"Record inserted successfully.", "insertedRecord": tag.ops[0]});
+        }
+      });
+    }
+  });
+});
+
+
 // localhost:3000/courses/insert
 router.post('/insert',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
       var collection = db.collection('Course');
+      var user = req.body.userId;
+      var tag = req.body.tag;
 
-    	collection.insert({
-        name: req.body.name,
-        tag: req.body.tag,
-        semester: req.body.semester,
-        year: req.body.year,
-        programme: req.body.programme,
-        desc: req.body.desc,
-        userId: ObjectId(req.body.userId)
-      }, function(err, user) {
-    		if (err) {
+      collection.findOne({"username": username, "tag": tag}, function(err, user) {
+        if (err) {
     		  res.json({"Status":false,"Result":err});
         }
         else {
-          res.send({"Status":true,"Result":"Record inserted successfully.", "insertedRecord": user.ops[0]});
+          if(user) {
+            res.send({"Status":false,"Result":"Username already exists."});
+          }
+          else {
+            collection.insert({
+              name: req.body.name,
+              tag: req.body.tag,
+              semester: req.body.semester,
+              year: req.body.year,
+              programme: req.body.programme,
+              desc: req.body.desc,
+              isActive: req.body.isActive,
+              userId: ObjectId(req.body.userId)
+            }, function(err, user) {
+          		if (err) {
+          		  res.json({"Status":false,"Result":err});
+              }
+              else {
+                res.send({"Status":true,"Result":"Record inserted successfully.", "insertedRecord": user.ops[0]});
+              }
+            });
+          }
         }
       });
+    }
+  });
+});
+
+
+// localhost:3000/courses/active/:id
+router.put('/active/:id', function(req, res, next){
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('Course');
+      var id = req.params.id;
+      var activate = req.body.isActive;
+
+      collection.update(
+        {_id: ObjectId(id)},
+        {$set: {isActive:activate}},
+        function(err, object) {
+            if (err){
+                res.json({"Status":false, "Result":err});
+            }else{
+                res.json({"Status":true, "Result":"Active status changed successfully."});
+            }
+        });
     }
   });
 });

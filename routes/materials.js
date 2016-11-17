@@ -76,9 +76,7 @@ router.put('/update/:id', function(req, res, next){
       var id = req.params.id;
       var updatedMaterial = req.body;
 
-      console.log(id);
-      console.log(updatedMaterial);
-      collection.findAndModify(
+      collection.update(
         {_id: ObjectId(id)},
         {$set: updatedMaterial},
         function(err, object) {

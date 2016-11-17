@@ -10,6 +10,7 @@ var gameSchema = new mongoose.Schema({
   minScore: {type: Number, required: true},
   desc: {type: String, required: false},
   hintUrl: {type: String, required: false},
+  gameLink: {type: String, required: false},
   topicId: {type: mongoose.Schema.Types.ObjectId, ref: 'Topic'}
 });
 

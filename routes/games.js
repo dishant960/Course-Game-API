@@ -58,6 +58,7 @@ router.post('/insert',function(req, res, next){
         minScore: req.body.minScore,
         desc: req.body.desc,
         hintUrl: req.body.hintUrl,
+        gameLink: req.body.gameLink,
         topicId: ObjectId(req.body.topicId)
     }, function(err, game) {
     		if (err) {
@@ -71,7 +72,6 @@ router.post('/insert',function(req, res, next){
   });
 });
 
-
 // localhost:3000/games/update/:id
 router.put('/update/:id', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
@@ -80,9 +80,7 @@ router.put('/update/:id', function(req, res, next){
       var id = req.params.id;
       var updatedGame = req.body;
 
-      console.log(id);
-      console.log(updatedGame);
-      collection.findAndModify(
+      collection.update(
         {_id: ObjectId(id)},
         {$set: updatedGame},
         function(err, object) {

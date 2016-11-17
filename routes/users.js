@@ -76,35 +76,47 @@ router.post('/register',function(req, res, next){
     if(!err) {
       var collection = db.collection('User');
       var user = req.body;
+      var username = req.body.username;
 
-    	collection.insert({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        userType: req.body.userType,
-        username: req.body.username,
-        password: req.body.password,
-        contact: req.body.contact,
-        specialization: req.body.specialization,
-        university: req.body.university,
-        city: req.body.city,
-        country: req.body.country,
-        facultyType: req.body.facultyType,
-        programme: req.body.programme,
-        studentId: req.body.studentId,
-        year: req.body.year,
-        semester: req.body.semester
-      }, function(err, user) {
-    		if (err) {
+      collection.findOne({"username": username}, function(err, user) {
+        if (err) {
     		  res.json({"Status":false,"Result":err});
         }
         else {
-          res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": user.ops[0]});
+          if(user) {
+            res.send({"Status":false,"Result":"Username already exists."});
+          }
+          else {
+            collection.insert({
+              firstName: req.body.firstName,
+              lastName: req.body.lastName,
+              userType: req.body.userType,
+              username: req.body.username,
+              password: req.body.password,
+              contact: req.body.contact,
+              specialization: req.body.specialization,
+              university: req.body.university,
+              city: req.body.city,
+              country: req.body.country,
+              facultyType: req.body.facultyType,
+              programme: req.body.programme,
+              studentId: req.body.studentId,
+              year: req.body.year,
+              semester: req.body.semester
+            }, function(err, user) {
+          		if (err) {
+          		  res.json({"Status":false,"Result":err});
+              }
+              else {
+                res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": user.ops[0]});
+              }
+            });
+          }
         }
       });
     }
   });
 });
-
 
 // localhost:3000/users/update/:id
 router.put('/update/:id', function(req, res, next){
@@ -114,9 +126,7 @@ router.put('/update/:id', function(req, res, next){
       var id = req.params.id;
       var updatedUser = req.body;
 
-      console.log(id);
-      console.log(updatedUser);
-      collection.findAndModify(
+      collection.update(
         {_id: ObjectId(id)},
         {$set: updatedUser},
         function(err, object) {

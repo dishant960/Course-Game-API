@@ -78,9 +78,7 @@ router.put('/update/:id', function(req, res, next){
       var id = req.params.id;
       var updatedPerformance = req.body;
 
-      console.log(id);
-      console.log(updatedPerformance);
-      collection.findAndModify(
+      collection.update(
         {_id: ObjectId(id)},
         {$set: updatedPerformance},
         function(err, object) {

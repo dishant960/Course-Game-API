@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var topicSchema = new mongoose.Schema({
   name: {type: String, required: true},
-  difLevel: {type: String, required: true, unique: false, uppercase:true},
+  difLevel: {type: String, required: false},
   startTime: {type: Date, required: true},
   endTime: {type: Date, required: true},
   desc: {type: String, required: true},
