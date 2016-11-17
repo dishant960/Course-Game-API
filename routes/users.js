@@ -84,7 +84,7 @@ router.post('/register',function(req, res, next){
         }
         else {
           if(user) {
-            res.send({"Status":false,"Result":"usr already exists."});
+            res.send({"Status":false,"Result":"Username already exists."});
           }
           else {
             collection.insert({
