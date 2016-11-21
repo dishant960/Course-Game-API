@@ -30,8 +30,7 @@ next();
 }
 
 app.use(header);
-   /** Serving from the same express Server
-   No cors required */
+
 app.use(express.static('../client'));
 app.use(bodyParser.json());
 
@@ -64,8 +63,6 @@ var upload = multer({ //multer settings
         console.log('running on 3000...');
     });
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
