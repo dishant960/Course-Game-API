@@ -23,6 +23,24 @@ router.get('/', function(req, res, next) {
   });
 });
 
+
+// localhost:3000/courses/enrollments
+router.get('/enrollments', function(req, res, next) {
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('Enrollments');
+      collection.find().toArray(function(err, record) {
+        if (err) {
+    		  res.json({"Status":false,"Result":err});
+        }
+        else {
+          res.send({"Status":true,"Result":record});
+        }
+      });
+    }
+  });
+});
+
 // localhost:3000/courses/tags
 router.get('/tags', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
@@ -88,16 +106,20 @@ router.post('/insert',function(req, res, next){
       var collection = db.collection('Course');
       var user = req.body.userId;
       var tag = req.body.tag;
+      console.log(user);
 
-      collection.findOne({"username": username, "tag": tag}, function(err, user) {
+      collection.findOne({"userId": new ObjectId(user)}, function(err, user) {
         if (err) {
+        console.log("err " + user);
     		  res.json({"Status":false,"Result":err});
         }
         else {
           if(user) {
+          console.log("if " + user);
             res.send({"Status":false,"Result":"Course already exists."});
           }
           else {
+          console.log("if else" + user);
             collection.insert({
               name: req.body.name,
               tag: req.body.tag,
