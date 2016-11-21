@@ -95,7 +95,7 @@ router.post('/insert',function(req, res, next){
         }
         else {
           if(user) {
-            res.send({"Status":false,"Result":"Username already exists."});
+            res.send({"Status":false,"Result":"Course already exists."});
           }
           else {
             collection.insert({

@@ -29,14 +29,7 @@ response.header("Access-Control-Allow-Headers",'Content-Type, x-access-token');
 next();
 }
 
-// code for file upload...
-
-app.use(function(req, res, next) { //allow cross origin requests
-       res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
-       res.header("Access-Control-Allow-Origin", "http://localhost");
-       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-       next();
-   });
+app.use(header);
    /** Serving from the same express Server
    No cors required */
 app.use(express.static('../client'));
@@ -70,12 +63,6 @@ var upload = multer({ //multer settings
     app.listen('3030', function(){
         console.log('running on 3000...');
     });
-
-
-
-
-
-app.use(header);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
