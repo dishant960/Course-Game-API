@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var multer = require('multer');
 
 var MongoClient = require('mongodb').MongoClient;
 var routes = require('./routes/index');
@@ -27,6 +28,52 @@ response.header("Access-Control-Allow-Methods",'GET,POST,PUT,DELETE');
 response.header("Access-Control-Allow-Headers",'Content-Type, x-access-token');
 next();
 }
+
+// code for file upload...
+
+app.use(function(req, res, next) { //allow cross origin requests
+       res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
+       res.header("Access-Control-Allow-Origin", "http://localhost");
+       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+       next();
+   });
+   /** Serving from the same express Server
+   No cors required */
+app.use(express.static('../client'));
+app.use(bodyParser.json());
+
+var storage = multer.diskStorage({ //multers disk storage settings
+        destination: function (req, file, cb) {
+            cb(null, './uploads/')
+        },
+        filename: function (req, file, cb) {
+            var datetimestamp = Date.now();
+            cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
+        }
+    });
+
+var upload = multer({ //multer settings
+                storage: storage
+            }).single('file');
+
+/** API path that will upload the files */
+    app.post('/upload', function(req, res) {
+        upload(req,res,function(err){
+            if(err){
+                 res.json({error_code:1,err_desc:err});
+                 return;
+            }
+            console.log("Successfull upload.");
+             res.json({error_code:0,err_desc:null});
+        })
+    });
+    app.listen('3030', function(){
+        console.log('running on 3000...');
+    });
+
+
+
+
 
 app.use(header);
 

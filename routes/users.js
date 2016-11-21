@@ -52,13 +52,13 @@ router.post('/login',function(req, res, next){
 
       console.log(username + "   " + password);
 
-      collection.findOne({"username": username}, function(err, user) {
+      collection.findOne({"username": username, "password": password}, function(err, user) {
         if (err) {
     		  res.json({"Status":false,"Result":err});
         }
         else {
           if(!user) {
-            res.send({"Status":false,"Result":"Authentication failed. User not found."});
+            res.send({"Status":false,"Result":"Wrong username or password supplied."});
           }
           else {
             res.send({"Status":true,"Result":"Successfully logged in.","LoggedUser":user});
