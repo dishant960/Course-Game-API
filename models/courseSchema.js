@@ -2,11 +2,10 @@ var mongoose = require('mongoose');
 
 var courseSchema = new mongoose.Schema({
   name: {type: String, required: true, unique: true},
-  semester: {type: Number, required: false},
   year: {type: Number, required: false},
-  programme: {type: String, required: false},
+  programme: [{pr : {type: String,required: false}, sem : [{type: Number,required: false}] }],
   desc: {type: String, required: false},
-  isActive: {type: Boolean, required: true, default: true},
+  isActive: {type: Boolean, required: false, default: true},
   tagId: {type: mongoose.Schema.Types.ObjectId, ref: 'Tag'},
   userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
 });
