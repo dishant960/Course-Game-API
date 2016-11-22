@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var announcementSchema = new mongoose.Schema({
   title: {type: String, required: true},
   desc: {type: String, required: true, unique: false, uppercase:true},
-  time: {type: Date, required: true},
+  time: {type: String, required: true},
   open: {type: String, required: true},
   batch: {type: String, required: true},
   year: {type: Number, required: true},

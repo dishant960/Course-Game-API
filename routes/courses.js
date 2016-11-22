@@ -106,20 +106,17 @@ router.post('/insert',function(req, res, next){
       var collection = db.collection('Course');
       var user = req.body.userId;
       var tag = req.body.tag;
-      console.log(user);
 
-      collection.findOne({"userId": new ObjectId(user)}, function(err, user) {
+      collection.findOne({"userId": new ObjectId(user), "tag": tag}, function(err, user) {
         if (err) {
-        console.log("err " + user);
     		  res.json({"Status":false,"Result":err});
         }
         else {
           if(user) {
-          console.log("if " + user);
+            console.log(user);
             res.send({"Status":false,"Result":"Course already exists."});
           }
           else {
-          console.log("if else" + user);
             collection.insert({
               name: req.body.name,
               tag: req.body.tag,
