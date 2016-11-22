@@ -59,6 +59,7 @@ router.post('/insert',function(req, res, next){
         desc: req.body.desc,
         hintUrl: req.body.hintUrl,
         gameLink: req.body.gameLink,
+        isActive: req.body.isActive,
         topicId: ObjectId(req.body.topicId)
     }, function(err, game) {
     		if (err) {

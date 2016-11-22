@@ -77,6 +77,24 @@ router.get('/getById/:id',function(req, res, next){
   });
 });
 
+// localhost:3000/courses/getByFaculty/:id
+router.get('/getByFaculty/:userId',function(req, res, next){
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('Course');
+      
+      collection.find({"userId": new ObjectId(req.params.userId)}).toArray(function(err, record) {
+        if (err) {
+    		  res.json({"Status":false,"Result":err});
+        }
+        else {
+          res.send({"Status":true,"Result":record});
+        }
+      });
+    }
+  });
+});
+
 
 // localhost:3000/courses/tags/insert
 router.post('/tags/insert',function(req, res, next){
