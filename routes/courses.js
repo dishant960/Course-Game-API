@@ -82,7 +82,7 @@ router.get('/getByFaculty/:userId',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
       var collection = db.collection('Course');
-      
+
       collection.find({"userId": new ObjectId(req.params.userId)}).toArray(function(err, record) {
         if (err) {
     		  res.json({"Status":false,"Result":err});
@@ -94,6 +94,40 @@ router.get('/getByFaculty/:userId',function(req, res, next){
     }
   });
 });
+
+// localhost:3000/courses/getByFaculty/:id
+router.get('/getByStd/:id',function(req, res, next){
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('User');
+      var id = req.params.id;
+
+      collection.findOne({"_id": new ObjectId(id)}, function(err, user) {
+        if (err) {
+    		  res.json({"Status":false,"Result":err});
+        }
+        else {
+          var sem = user.semester;
+          var prog = user.programme;
+
+          console.log(sem, prog);
+          collection = db.collection('Course');
+
+          collection.find({semester: sem, programme: prog}).toArray(function(err, record) {
+            if (err) {
+        		  res.json({"Status":false,"Result":err});
+            }
+            else {
+              console.log(sem, prog);
+              res.send({"Status":true,"Result":record});
+            }
+          });
+        }
+      });
+    }
+  });
+});
+
 
 
 // localhost:3000/courses/tags/insert
@@ -189,11 +223,9 @@ router.put('/update/:id', function(req, res, next){
     if(!err) {
       var collection = db.collection('Course');
       var id = req.params.id;
-      var updatedUser = req.body;
+      var updatedRecord = req.body;
 
-      console.log(id);
-      console.log(updatedRecord);
-      collection.findAndModify(
+      collection.update(
         {_id: ObjectId(id)},
         {$set: updatedRecord},
         function(err, object) {
@@ -206,6 +238,7 @@ router.put('/update/:id', function(req, res, next){
     }
   });
 });
+
 
 // localhost:3000/courses/delete/:id
 router.delete('/delete/:id', function(req,res, next){

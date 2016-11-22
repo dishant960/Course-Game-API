@@ -1,54 +1,17 @@
 var express = require('express');
 var MongoClient = require('mongodb').MongoClient;
 var router = express.Router();
-var topicSchema = require('../models/topicSchema');
+var schema = require('../models/courseSchema');
+var tagSchema = require('../models/tagSchema');
 var connectionString = "mongodb://dishant:123456@ds053196.mlab.com:53196/coursegame";
 var ObjectId = require('mongodb').ObjectID;
 
-// localhost:3000/topics
+// localhost:3000/enrollments
 router.get('/', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
-      var collection = db.collection('Topic');
-      collection.find().toArray(function(err, topics) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
-        else {
-          res.send({"Status":true,"Result":topics});
-        }
-      });
-    }
-  });
-});
-
-
-// localhost:3000/topics/getById/:id
-router.get('/getById/:id',function(req, res, next){
-  MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
-      var collection = db.collection('Topic');
-      var id = req.params.id;
-
-      collection.findOne({"_id": new ObjectId(id)}, function(err, topic) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
-        else {
-          res.send({"Status":true,"Result":topic});
-        }
-      });
-    }
-  });
-});
-
-// localhost:3000/topics/getByCourse/:id
-router.get('/getByCourse/:id',function(req, res, next){
-  MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
-      var collection = db.collection('Topic');
-
-      collection.find({"courseId": new ObjectId(req.params.id)}).toArray(function(err, record) {
+      var collection = db.collection('Enrollment');
+      collection.find().toArray(function(err, record) {
         if (err) {
     		  res.json({"Status":false,"Result":err});
         }
@@ -60,26 +23,46 @@ router.get('/getByCourse/:id',function(req, res, next){
   });
 });
 
-// localhost:3000/topics/insert
-router.post('/insert',function(req, res, next){
+// localhost:3000/enrollments/getByStd/:id
+router.get('/getByStd/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
-      var collection = db.collection('Topic');
-      var topic = req.body;
+      var collection = db.collection('Enrollment');
 
-    	collection.insert({
-        name: req.body.name,
-        difLevel: req.body.difLevel,
-        startTime: req.body.startTime,
-        endTime: req.body.endTime,
-        desc: req.body.desc,
-        courseId: ObjectId(req.body.courseId)
-    }, function(err, topic) {
-    		if (err) {
+      collection.find({"userId": new ObjectId(req.params.id)}).toArray(function(err, record) {
+        if (err) {
     		  res.json({"Status":false,"Result":err});
         }
         else {
-          res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": topic.ops[0]});
+          if(record) {
+            res.send({"Status":true,"Result":record});
+          }
+          else {
+            res.send({"Status":true,"Result":"No records found."});
+          }
+        }
+      });
+    }
+  });
+});
+
+// localhost:3000/enrollments/getByCourse/:id
+router.get('/getByCourse/:id',function(req, res, next){
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('Enrollment');
+
+      collection.find({"courseId": new ObjectId(req.params.id)}).toArray(function(err, record) {
+        if (err) {
+    		  res.json({"Status":false,"Result":err});
+        }
+        else {
+          if(record) {
+            res.send({"Status":true,"Result":record});
+          }
+          else {
+            res.send({"Status":true,"Result":"No records found."});
+          }
         }
       });
     }
@@ -87,17 +70,40 @@ router.post('/insert',function(req, res, next){
 });
 
 
-// localhost:3000/topics/update/:id
+
+// localhost:3000/enrollments/insert
+router.post('/insert',function(req, res, next){
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('Enrollment');
+
+    	collection.insert({
+        userId: ObjectId(req.body.userId),
+        courseId: ObjectId(req.body.courseId)
+      }, function(err, record) {
+    		if (err) {
+    		  res.json({"Status":false,"Result":err});
+        }
+        else {
+          res.send({"Status":true,"Result":"Record inserted successfully.", "insertedRecord": record.ops[0]});
+        }
+      });
+    }
+  });
+});
+
+
+// localhost:3000/enrollments/update/:id
 router.put('/update/:id', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
-      var collection = db.collection('Topic');
+      var collection = db.collection('Enrollment');
       var id = req.params.id;
-      var updatedTopic = req.body;
+      var updatedRecord = req.body;
 
       collection.update(
         {_id: ObjectId(id)},
-        {$set: updatedTopic},
+        {$set: updatedRecord},
         function(err, object) {
             if (err){
                 res.json({"Status":false, "Result":err});
@@ -109,11 +115,12 @@ router.put('/update/:id', function(req, res, next){
   });
 });
 
-// localhost:3000/topics/delete/:id
+
+// localhost:3000/enrollments/delete/:id
 router.delete('/delete/:id', function(req,res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
-      var collection = db.collection('Topic');
+      var collection = db.collection('Enrollment');
       var id = req.params.id;
 
       console.log(id);

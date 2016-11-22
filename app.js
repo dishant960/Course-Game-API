@@ -15,6 +15,7 @@ var materials = require('./routes/materials');
 var games = require('./routes/games');
 var performances = require('./routes/performances');
 var announcements = require('./routes/announcements');
+var enrollments = require('./routes/enrollments');
 
 var app = express();
 
@@ -77,6 +78,7 @@ app.use('/materials', materials);
 app.use('/games', games);
 app.use('/announcements', announcements);
 app.use('/performances', performances);
+app.use('/enrollments', enrollments);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

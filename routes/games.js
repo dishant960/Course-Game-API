@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
       var collection = db.collection('Game');
+
       collection.find().toArray(function(err, games) {
         if (err) {
     		  res.json({"Status":false,"Result":err});
@@ -35,6 +36,24 @@ router.get('/getById/:id',function(req, res, next){
         }
         else {
           res.send({"Status":true,"Result":game});
+        }
+      });
+    }
+  });
+});
+
+// localhost:3000/games/getByTopic/:id
+router.get('/getByTopic/:id',function(req, res, next){
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('Game');
+
+      collection.find({"topicId": new ObjectId(req.params.id)}).toArray(function(err, record) {
+        if (err) {
+    		  res.json({"Status":false,"Result":err});
+        }
+        else {
+          res.send({"Status":true,"Result":record});
         }
       });
     }
