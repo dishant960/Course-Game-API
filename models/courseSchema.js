@@ -3,7 +3,12 @@ var mongoose = require('mongoose');
 var courseSchema = new mongoose.Schema({
   name: {type: String, required: true, unique: true},
   year: {type: Number, required: false},
-  programme: [{pr : {type: String,required: false}, sem : [{type: Number,required: false}] }],
+  programme: [{
+    pr : {type: String,required: false},
+    sem : [
+      {type: Number,required: false}
+    ]
+  }],
   desc: {type: String, required: false},
   isActive: {type: Boolean, required: false, default: true},
   tagId: {type: mongoose.Schema.Types.ObjectId, ref: 'Tag'},

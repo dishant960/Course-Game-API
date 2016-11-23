@@ -66,7 +66,7 @@ router.post('/login',function(req, res, next){
               res.send({"Status":true,"Result":"Successfully logged in.","LoggedUser":user});
             }
             else {
-              res.send({"Status":true,"Result":"User type is not valid."});
+              res.send({"Status":false,"Result":"User type is not valid."});
             }
           }
         }

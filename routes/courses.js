@@ -121,7 +121,6 @@ router.get('/getByStd/:id',function(req, res, next){
           var sem = user.semester;
           var prog = user.programme;
 
-          console.log(sem, prog);
           collection = db.collection('Course');
 
           collection.find({semester: sem, programme: prog}).toArray(function(err, record) {
@@ -129,8 +128,67 @@ router.get('/getByStd/:id',function(req, res, next){
         		  res.json({"Status":false,"Result":err});
             }
             else {
-              console.log(sem, prog);
               res.send({"Status":true,"Result":record});
+            }
+          });
+        }
+      });
+    }
+  });
+});
+
+
+// localhost:3000/courses/getByStd/:id
+router.get('/getByStd1/:id',function(req, res, next){
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('User');
+      var id = req.params.id;
+
+      collection.findOne({"_id": new ObjectId(id)}, function(err, user) {
+        if (err) {
+    		  res.json({"Status":false,"Result":err});
+        }
+        else {
+          var sem = user.semester;
+          var prog = user.programme;
+          console.log(sem, prog);
+          collection = db.collection('Enrollment');
+          collection.find({"userId": new ObjectId(req.params.id)}).toArray(function(err, enrolled) {
+            if (err) {
+        		  res.json({"Status":false,"Result":err});
+            }
+            else {
+              if(enrolled) {
+                var enrolledCourse_ids = [];
+                for(var i = 0; i < enrolled.length; i++) {
+                  enrolledCourse_ids[i]=enrolled[i].courseId;
+                }
+                collection = db.collection('Course');
+
+                collection.find({
+                  $and: [{
+                    semester: sem
+                  },
+                  {
+                    $and: [{
+                      programme: prog
+                    },
+                    {
+                      "_id": {
+                        $nin: enrolledCourse_ids
+                      }
+                    }]
+                  }]
+                }).toArray(function(err, courses) {
+                  if (err) {
+              		  res.json({"Status":false,"Result":err});
+                  }
+                  else {
+                    res.send({"Status":true,"Result":courses});
+                  }
+                });
+              }
             }
           });
         }
