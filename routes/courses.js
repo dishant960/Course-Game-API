@@ -88,12 +88,13 @@ router.get('/getById/:id',function(req, res, next){
 });
 
 // localhost:3000/courses/getByFaculty/:id
-router.get('/getByFaculty/:userId',function(req, res, next){
+router.get('/getByFaculty/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
       var collection = db.collection('Course');
+      var user_id = req.params.id;
 
-      collection.find({"userId": new ObjectId(req.params.userId)}).toArray(function(err, record) {
+      collection.find({userId: user_id}).toArray(function(err, record) {
         if (err) {
     		  res.json({"Status":false,"Result":err});
         }
