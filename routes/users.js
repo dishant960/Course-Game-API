@@ -49,6 +49,7 @@ router.post('/login',function(req, res, next){
       var collection = db.collection('User');
       var username = req.body.username;
       var password = req.body.password;
+      var userType = req.body.userType;
 
       console.log(username + "   " + password);
 
@@ -61,7 +62,12 @@ router.post('/login',function(req, res, next){
             res.send({"Status":false,"Result":"Wrong username or password supplied."});
           }
           else {
-            res.send({"Status":true,"Result":"Successfully logged in.","LoggedUser":user});
+            if(userType == user.userType) {
+              res.send({"Status":true,"Result":"Successfully logged in.","LoggedUser":user});
+            }
+            else {
+              res.send({"Status":true,"Result":"User type is not valid."});
+            }
           }
         }
       });
