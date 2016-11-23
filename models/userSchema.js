@@ -11,7 +11,7 @@ var userSchema = new mongoose.Schema({
   university: {type: String, required: false},
   city: {type: String, required: true},
   country: {type: String, required: true},
-  facultyType: {type: String, required: false},
+  facultyType: {type: String, required: false}, // 1 - Faculty, 0 - Student
   programme: {type: String, required: false},
   studentId: {type: Number, required: false},
   year: {type: Number, required: false},

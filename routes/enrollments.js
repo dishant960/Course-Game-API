@@ -35,7 +35,19 @@ router.get('/getByStd/:id',function(req, res, next){
         }
         else {
           if(record) {
-            res.send({"Status":true,"Result":record});
+            collection = db.collection('Course');
+            var course_ids = [];
+            for(var i = 0; i < record.length; i++) {
+              course_ids[i]=record[i].courseId;
+            }
+            collection.find({ "_id": { $in: course_ids } }).toArray(function(err, course) {
+              if(err) {
+                res.json({"Status":false,"Result":err});
+              }
+              else {
+                res.send({"Status":true,"Result":course});
+              }
+            });
           }
           else {
             res.send({"Status":true,"Result":"No records found."});

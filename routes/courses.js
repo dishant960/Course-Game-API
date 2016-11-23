@@ -106,7 +106,7 @@ router.get('/getByFaculty/:id',function(req, res, next){
   });
 });
 
-// localhost:3000/courses/getByFaculty/:id
+// localhost:3000/courses/getByStd/:id
 router.get('/getByStd/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
