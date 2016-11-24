@@ -15,7 +15,7 @@ var userSchema = new mongoose.Schema({
   programme: {type: String, required: false},
   studentId: {type: Number, required: false},
   year: {type: Number, required: false},
-  semester: {type: Number, required: false}
+  semester: {type: String, required: false}
 });
 
 var User = mongoose.model('User', userSchema);

@@ -17,8 +17,6 @@ var performances = require('./routes/performances');
 var announcements = require('./routes/announcements');
 var enrollments = require('./routes/enrollments');
 
-var material = require('./models/materialSchema.js');
-
 var app = express();
 
     app.set('views', path.join(__dirname, 'views'));
@@ -33,6 +31,8 @@ var app = express();
 
     app.use(header);
 
+
+    // code to download the materials from server
     app.get('/download/:file(*)', function(req, res)
     {
       var file = req.params.file;
@@ -40,6 +40,43 @@ var app = express();
       var path =__dirname+'/public/'+file;
       res.download(path);
     });
+
+
+
+
+    var nodemailer = require("nodemailer");
+
+    var smtpTransport = nodemailer.createTransport("SMTP",{
+        service: "Gmail",
+        auth: {
+            user: "daiictse2@gmail.com",
+            pass: "saurabhtiwari1"
+        }
+    });
+
+    app.get('/send',function(req,res){
+      var mailOptions={
+        to : "hardisk.uvs1994@gmail.com",
+        subject : "Password Recovery",
+        text : "This mail is from Course-Game. You have requested for password change. So to change the password click to the below link."
+      }
+      console.log(mailOptions);
+      smtpTransport.sendMail(mailOptions, function(error, response){
+        if(error){
+          console.log(error);
+          res.end("error");
+        }
+        else{
+          console.log("Message sent: " + response.message);
+          res.end("sent");
+        }
+      });
+    });
+
+
+
+
+
 
     app.use(express.static('../client'));
     app.use(bodyParser.json());

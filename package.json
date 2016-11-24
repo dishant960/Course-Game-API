@@ -11,6 +11,7 @@
     "gulp-jshint": "1.12.0"
   },
   "dependencies": {
+    "alphamail": "^1.1.5",
     "body-parser": "^1.15.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
@@ -20,7 +21,7 @@
     "mongoose": "^4.6.3",
     "morgan": "~1.7.0",
     "multer": "1.1.0",
-    "nodemailer": "latest",
+    "nodemailer": "0.7.1",
     "sendgrid": "^4.7.1",
     "serve-favicon": "~2.3.0"
   }
