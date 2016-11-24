@@ -19,86 +19,82 @@ var enrollments = require('./routes/enrollments');
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+    app.set('views', path.join(__dirname, 'views'));
+    app.set('view engine', 'jade');
 
-var header = function(request,response, next){
-response.header("Access-Control-Allow-Origin",'*');
-response.header("Access-Control-Allow-Methods",'GET,POST,PUT,DELETE');
-response.header("Access-Control-Allow-Headers",'Content-Type, x-access-token');
-next();
-}
+    var header = function(request,response, next){
+      response.header("Access-Control-Allow-Origin",'*');
+      response.header("Access-Control-Allow-Methods",'GET,POST,PUT,DELETE');
+      response.header("Access-Control-Allow-Headers",'Content-Type, x-access-token');
+      next();
+    }
 
-app.use(header);
+    app.use(header);
 
-app.use(express.static('../client'));
-app.use(bodyParser.json());
+    app.use(express.static('../client'));
+    app.use(bodyParser.json());
 
-var storage = multer.diskStorage({ //multers disk storage settings
-        destination: function (req, file, cb) {
-            cb(null, './uploads/')
-        },
-        filename: function (req, file, cb) {
-            var datetimestamp = Date.now();
-            cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
-        }
+
+
+    var storage =   multer.diskStorage({
+      destination: function (req, file, callback) {
+        callback(null, './uploads');
+      },
+      filename: function (req, file, callback) {
+        callback(null, file.fieldname + '-' + Date.now());
+      }
+    });
+    var upload = multer({ storage : storage},{limits : {fieldNameSize : 10}}).single('file');
+
+    app.get('/',function(req,res){
+      res.sendFile(__dirname + "/index.html");
     });
 
-var upload = multer({ //multer settings
-                storage: storage
-            }).single('file');
-
-/** API path that will upload the files */
-    app.post('/upload', function(req, res) {
-        upload(req,res,function(err){
-            if(err){
-                 res.json({error_code:1,err_desc:err});
-                 return;
-            }
-            console.log("Successfull upload.");
-             res.json({error_code:0,err_desc:null});
-        })
-    });
-    app.listen('3030', function(){
-        console.log('running on 3000...');
+    app.post('/api/fileUpload',function(req,res){
+      upload(req,res,function(err) {
+          if(err) {
+              return res.end("Error uploading file.");
+          }
+          res.end("File is uploaded");
+      });
     });
 
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+    app.use(logger('dev'));
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(cookieParser());
+    app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
-app.use('/courses', courses);
-app.use('/topics', topics);
-app.use('/materials', materials);
-app.use('/games', games);
-app.use('/announcements', announcements);
-app.use('/performances', performances);
-app.use('/enrollments', enrollments);
+    app.use('/', routes);
+    app.use('/users', users);
+    app.use('/courses', courses);
+    app.use('/topics', topics);
+    app.use('/materials', materials);
+    app.use('/games', games);
+    app.use('/announcements', announcements);
+    app.use('/performances', performances);
+    app.use('/enrollments', enrollments);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
+    // catch 404 and forward to error handler
+    app.use(function(req, res, next) {
+      var err = new Error('Not Found');
+      err.status = 404;
+      next(err);
     });
-  });
+
+    // error handlers
+
+    // development error handler
+    // will print stacktrace
+    if (app.get('env') === 'development') {
+      app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+          message: err.message,
+          error: err
+        });
+      });
+      console.log('running on 3000...');
 }
 
 // production error handler
