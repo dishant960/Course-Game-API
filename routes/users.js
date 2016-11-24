@@ -69,6 +69,7 @@ router.post('/encrypt',function(req, res, next){
       var encrypted_password = encrypt(password);
       // outputs hello world
       console.log(decrypt(encrypted_password));
+      res.send({"Actual Password": password , "Cypher Text" : encrypted_password});
     }
   });
 });
