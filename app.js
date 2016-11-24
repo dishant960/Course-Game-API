@@ -33,11 +33,18 @@ var app = express();
 
     app.use(header);
 
+    app.get('/download/:file(*)', function(req, res)
+    {
+      var file = req.params.file;
+      console.log(__dirname);
+      var path =__dirname+'/public/'+file;
+      res.download(path);
+    });
+
     app.use(express.static('../client'));
     app.use(bodyParser.json());
 
-
-
+/*
     var storage =   multer.diskStorage({
       destination: function (req, file, callback) {
         callback(null, './uploads');
@@ -60,6 +67,7 @@ var app = express();
           var upl = new material({
             name: req.file.originalname
           });
+          console.log(req.file);
           upl.save(function(err,docs) {
                   if (err) {
                       console.log(err);
@@ -68,7 +76,7 @@ var app = express();
               });
           res.end("File is uploaded " + req.body.path);
       });
-    });
+    });*/
 
     app.use(logger('dev'));
     app.use(bodyParser.json());
