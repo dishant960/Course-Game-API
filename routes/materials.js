@@ -4,38 +4,7 @@ var router = express.Router();
 var materialSchema = require('../models/materialSchema');
 var connectionString = "mongodb://dishant:123456@ds053196.mlab.com:53196/coursegame";
 var ObjectId = require('mongodb').ObjectID;
-var multer = require('multer');
-
-var storage =   multer.diskStorage({
-  destination: function (req, file, callback) {
-    callback(null, './uploads');
-  },
-  filename: function (req, file, callback) {
-    callback(null, file.fieldname + '-' + Date.now());
-  }
-});
-var upload = multer({ storage : storage},{limits : {fieldNameSize : 10}}).single('file');
-
-router.post('/fileUpload',function(req,res){
-  res.upload(req,res,function(err) {
-      if(err) {
-          return res.end("Error uploading file.");
-      }
-      MongoClient.connect(connectionString, function(err, db) {
-        var collection = db.collection('Material');
-        var material = req.body;
-
-      	collection.insert({
-          name: req.body.name
-        }, function(err, material) {
-      		if (err) {
-      		  res.json({"Status":false,"Result":err});
-          }
-          res.end("File is uploaded.");
-        });
-      });
-  });
-});
+var fs = require('fs');
 
 // localhost:3000/materials
 router.get('/', function(req, res, next) {
@@ -52,6 +21,47 @@ router.get('/', function(req, res, next) {
       });
     }
   });
+});
+
+// localhost:3000/materials/upload
+router.post('/upload', function(req, res) {
+  var path=require('path'); // add path module
+    fs.readFile(req.files.image.path, function (err, data){ // readfilr from the given path
+    var dirname = __dirname + '/public/'; // path.resolve(“.”) get application directory path
+    var newPath = dirname +   req.files.image.originalFilename; // add the file name
+    fs.writeFile(newPath, data, function (err) { // write file in uploads folder
+      if(err){
+        res.json("Failed to upload your file");
+      }
+      else {
+        MongoClient.connect(connectionString, function(err, db) {
+          var collection = db.collection('Material');
+          var material = req.body;
+
+          collection.insert({
+            link: req.files.image.originalFilename
+          }, function(err, material) {
+            if (err) {
+              res.json({"Status":false,"Result":err});
+            }
+            res.json("Successfully uploaded your file");
+          });
+        });
+      }
+    });
+  });
+});
+
+
+// localhost:3000/materials/uploaded/:file
+router.get('/uploaded/:file(*)', function (req, res){
+  var path=require('path');
+  file = req.params.file;
+  var dirname = __dirname + '/public/';
+  var img = fs.readFileSync(dirname + file);
+  res.writeHead(200, {'Content-Type': 'image/png' });
+  res.end(img, 'binary');
+  console.log("OK");
 });
 
 // localhost:3000/materials/getById/:id
