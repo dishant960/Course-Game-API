@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var multer = require('multer');
+var fs = require('fs');
 
 var MongoClient = require('mongodb').MongoClient;
 var routes = require('./routes/index');
@@ -39,6 +40,32 @@ var app = express();
       console.log(__dirname);
       var path =__dirname+'/public/'+file;
       res.download(path);
+    });
+
+    app.post('/upload', function(req, res) {
+      var path=require('path'); // add path module
+        fs.readFile(req.files.image.path, function (err, data){ // readfilr from the given path
+        var dirname = __dirname + '/public/'; // path.resolve(“.”) get application directory path
+        var newPath = dirname +   req.files.image.originalFilename; // add the file name
+        fs.writeFile(newPath, data, function (err) { // write file in uploads folder
+          if(err){
+            res.json("Failed to upload your file");
+          }
+          else {
+            res.json("Successfully uploaded your file");
+          }
+        });
+      });
+    });
+
+    app.get('/uploads/:file', function (req, res){
+      var path=require('path');
+      file = req.params.file;
+      var dirname = __dirname + '/public/';
+      var img = fs.readFileSync(dirname + file);
+      res.writeHead(200, {'Content-Type': 'image/png' });
+      res.end(img, 'binary');
+      console.log("OK");
     });
 
     app.use(express.static('../client'));

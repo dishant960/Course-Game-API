@@ -17,7 +17,7 @@ var storage =   multer.diskStorage({
 var upload = multer({ storage : storage},{limits : {fieldNameSize : 10}}).single('file');
 
 router.post('/fileUpload',function(req,res){
-  upload(req,res,function(err) {
+  res.upload(req,res,function(err) {
       if(err) {
           return res.end("Error uploading file.");
       }
