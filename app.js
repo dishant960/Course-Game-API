@@ -17,6 +17,8 @@ var performances = require('./routes/performances');
 var announcements = require('./routes/announcements');
 var enrollments = require('./routes/enrollments');
 
+var material = require('./models/materialSchema.js');
+
 var app = express();
 
     app.set('views', path.join(__dirname, 'views'));
@@ -55,6 +57,15 @@ var app = express();
           if(err) {
               return res.end("Error uploading file.");
           }
+          var upl = new material({
+            name: req.file.originalname
+          });
+          upl.save(function(err,docs) {
+                  if (err) {
+                      console.log(err);
+                  }
+                  res.json(docs);
+              });
           res.end("File is uploaded " + req.body.path);
       });
     });
