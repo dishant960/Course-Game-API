@@ -54,6 +54,7 @@ router.post('/insert',function(req, res, next){
         startTime: req.body.startTime,
         endTime: req.body.endTime,
         desc: req.body.desc,
+        link: req.body.link,
         topicId: ObjectId(req.body.topicId)
     }, function(err, material) {
     		if (err) {

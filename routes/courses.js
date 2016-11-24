@@ -63,7 +63,7 @@ router.get('/getById/:id',function(req, res, next){
               for(var i = 0; i < topic.length; i++) {
                 topic_ids[i]=topic[i]._id;
               }
-              collection.find({ topicId: { $in: topic_ids } }).toArray(function(err, games) {
+              collection.find({ "topicId": { $in: topic_ids } }).toArray(function(err, games) {
                 if (err) {
             		  res.json({"Status":false,"Result":err});
                 }
@@ -118,17 +118,36 @@ router.get('/getByStd/:id',function(req, res, next){
     		  res.json({"Status":false,"Result":err});
         }
         else {
-          var sem = user.semester;
           var prog = user.programme;
+          var sem_array = [user.semester];
 
-          collection = db.collection('Course');
-
-          collection.find({semester: sem, programme: prog}).toArray(function(err, record) {
-            if (err) {
-        		  res.json({"Status":false,"Result":err});
+          collection = db.collection('Enrollment');
+          collection.find({"userId": new ObjectId(req.params.id)}).toArray(function(err, enrolled) {
+            if(err) {
+              res.json({"Status":false,"Result":err});
             }
             else {
-              res.send({"Status":true,"Result":record});
+              if(enrolled) {
+                var enrolledCourse_ids = [];
+                for(var i = 0; i < enrolled.length; i++) {
+                  enrolledCourse_ids[i]=enrolled[i].courseId;
+                }
+
+                collection = db.collection('Course');
+                //collection.find({semester: sem, programme: prog}).toArray(function(err, record) {
+                collection.aggregate([
+                  {$match: {'programme.pr': prog}},
+                  {$match: {'programme.sem': {$in: sem_array}}},
+                  {$match: {'_id': {$nin: enrolledCourse_ids}}}
+                ]).toArray(function(err, record) {
+                  if (err) {
+              		  res.json({"Status":false,"Result":err});
+                  }
+                  else {
+                    res.send({"Status":true,"Result":record});
+                  }
+                });
+              }
             }
           });
         }
@@ -152,7 +171,7 @@ router.get('/getByStd1/:id',function(req, res, next){
         else {
           var sem = user.semester;
           var prog = user.programme;
-          console.log(sem, prog);
+
           collection = db.collection('Enrollment');
           collection.find({"userId": new ObjectId(req.params.id)}).toArray(function(err, enrolled) {
             if (err) {
@@ -219,22 +238,35 @@ router.post('/tags/insert',function(req, res, next){
   });
 });
 
-/*router.get('/insert12',function(req, res, next){
+router.post('/insert12',function(req, res, next){
+  var programs = [];
+  var MSCIT_sem = [];
+  var BTECH_sem = [];
+  programs = Object.keys(req.body.pr);
+  for(var i =0; i < programs.length; i++) {
+    if(programs[i] == "MSCIT")
+      MSCIT_sem = Object.keys(req.body.pr.MSCIT);
+    else if(programs[i] == "BTECH")
+      BTECH_sem = Object.keys(req.body.pr.BTECH);
+  }
+  //console.log(programs, MSCIT_sem, BTECH_sem, ARD_sem);
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
       var collection = db.collection('Course');
       collection.insert({
-        name: "Abcd",
-        year: 2015,
+        name: req.body.name,
+        year: req.body.year,
         programme: [{
-          pr : "Msc",
-          sem : [
-            2,
-            4
-          ]}
-        ],
-        desc: "sddsd",
-        isActive: true,
+          pr: "MSCIT",
+          sem: MSCIT_sem
+        },
+        {
+          pr: "BTECH",
+          sem: BTECH_sem
+        }],
+        desc: req.body.desc,
+        isActive: req.body.isActive,
+        userId: req.body.userId
       }, function(err, user) {
     		if (err) {
     		  res.json({"Status":false,"Result":err});
@@ -245,7 +277,7 @@ router.post('/tags/insert',function(req, res, next){
       });
     }
   });
-});*/
+});
 
 // localhost:3000/courses/insert
 router.post('/insert',function(req, res, next){
@@ -306,11 +338,35 @@ router.put('/active/:id', function(req, res, next){
 
 // localhost:3000/courses/update/:id
 router.put('/update/:id', function(req, res, next){
+  var programs = [];
+  var MSCIT_sem = [];
+  var BTECH_sem = [];
+  programs = Object.keys(req.body.pr);
+  for(var i =0; i < programs.length; i++) {
+    if(programs[i] == "MSCIT")
+      MSCIT_sem = Object.keys(req.body.pr.MSCIT);
+    else if(programs[i] == "BTECH")
+      BTECH_sem = Object.keys(req.body.pr.BTECH);
+  }
   MongoClient.connect(connectionString, function(err, db) {
     if(!err) {
       var collection = db.collection('Course');
       var id = req.params.id;
-      var updatedRecord = req.body;
+      var updatedRecord = {
+        name: req.body.name,
+        year: req.body.year,
+        programme: [{
+          pr: "MSCIT",
+          sem: MSCIT_sem
+        },
+        {
+          pr: "BTECH",
+          sem: BTECH_sem
+        }],
+        desc: req.body.desc,
+        isActive: req.body.isActive,
+        userId: req.body.userId
+      };
 
       collection.update(
         {_id: ObjectId(id)},

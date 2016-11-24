@@ -12,7 +12,8 @@ var gameSchema = new mongoose.Schema({
   hintUrl: {type: String, required: false},
   gameLink: {type: String, required: false},
   isActive: {type: Boolean, required: true, default: true},
-  topicId: {type: mongoose.Schema.Types.ObjectId, ref: 'Topic'}
+  topicId: {type: mongoose.Schema.Types.ObjectId, ref: 'Topic'},
+  gameId: {type: mongoose.Schema.Types.ObjectId, ref: 'GameList'}
 });
 
 var Game = mongoose.model('Game', gameSchema);

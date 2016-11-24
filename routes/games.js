@@ -2,6 +2,7 @@ var express = require('express');
 var MongoClient = require('mongodb').MongoClient;
 var router = express.Router();
 var gameSchema = require('../models/gameSchema');
+var gameListSchema = require('../models/gameListSchema');
 var connectionString = "mongodb://dishant:123456@ds053196.mlab.com:53196/coursegame";
 var ObjectId = require('mongodb').ObjectID;
 
@@ -22,6 +23,26 @@ router.get('/', function(req, res, next) {
     }
   });
 });
+
+
+// localhost:3000/games
+router.get('/list', function(req, res, next) {
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('GameList');
+
+      collection.find().toArray(function(err, gamesList) {
+        if (err) {
+          res.json({"Status":false,"Result":err});
+        }
+        else {
+          res.send({"Status":true,"Result":gamesList});
+        }
+      });
+    }
+  });
+});
+
 
 // localhost:3000/games/getById/:id
 router.get('/getById/:id',function(req, res, next){
@@ -48,7 +69,7 @@ router.get('/getByTopic/:id',function(req, res, next){
     if(!err) {
       var collection = db.collection('Game');
 
-      collection.find({"topicId": new ObjectId(req.params.id)}).toArray(function(err, record) {
+      collection.find({topicId: req.params.id}).toArray(function(err, record) {
         if (err) {
     		  res.json({"Status":false,"Result":err});
         }
@@ -60,6 +81,30 @@ router.get('/getByTopic/:id',function(req, res, next){
   });
 });
 
+
+// localhost:3000/games/insert
+router.post('/list/insert',function(req, res, next){
+  MongoClient.connect(connectionString, function(err, db) {
+    if(!err) {
+      var collection = db.collection('GameList');
+      var game = req.body;
+
+    	collection.insert({
+        title: req.body.title,
+        link: req.body.link
+    }, function(err, gameList) {
+    		if (err) {
+    		  res.json({"Status":false,"Result":err});
+        }
+        else {
+          res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": gameList.ops[0]});
+        }
+      });
+    }
+  });
+});
+
+
 // localhost:3000/games/insert
 router.post('/insert',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
@@ -67,7 +112,7 @@ router.post('/insert',function(req, res, next){
       var collection = db.collection('Game');
       var game = req.body;
 
-    	collection.insert({
+      collection.insert({
         title: req.body.title,
         difLevel: req.body.difLevel,
         points: req.body.points,
@@ -81,8 +126,8 @@ router.post('/insert',function(req, res, next){
         isActive: req.body.isActive,
         topicId: ObjectId(req.body.topicId)
     }, function(err, game) {
-    		if (err) {
-    		  res.json({"Status":false,"Result":err});
+        if (err) {
+          res.json({"Status":false,"Result":err});
         }
         else {
           res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": game.ops[0]});
