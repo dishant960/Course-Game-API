@@ -304,7 +304,7 @@ router.post('/app/forgotPass',function(req,res){
   var mailOptions={
       to : username,
       subject : "Course-Game Password Recovery",
-      text : "You have requested for password change. Your One-Time-Password (OTP) is " + code + "."
+      text : "You have requested for password change. Your One-Time-Password(OTP) is " + code + "."
     }
 
   smtpTransport.sendMail(mailOptions, function(err, response){
