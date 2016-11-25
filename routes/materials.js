@@ -110,13 +110,21 @@ router.post('/insert',function(req, res, next){
 
 
 // localhost:3000/materials/update/:id
-router.put('/update/:id', function(req, res, next){
+router.post('/update', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(err) throw err;
     else {
       var collection = db.collection('Material');
-      var id = req.params.id;
-      var updatedMaterial = req.body;
+      var id = req.body._id;
+      var updatedMaterial = {
+        name: req.body.name,
+        fileType: req.body.fileType,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        desc: req.body.desc,
+        link: req.body.link,
+        topicId: ObjectId(req.body.topicId)
+      };
 
       collection.update(
         {_id: ObjectId(id)},

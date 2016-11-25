@@ -68,13 +68,22 @@ router.post('/insert',function(req, res, next){
 
 
 // localhost:3000/performances/update/:id
-router.put('/update/:id', function(req, res, next){
+router.post('/update', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(err) throw err;
     else {
       var collection = db.collection('performance');
-      var id = req.params.id;
-      var updatedPerformance = req.body;
+      var id = req.body._id;
+      var updatedPerformance = {
+        attempts: req.body.attempts,
+        score: req.body.score,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        hintsUsed: req.body.hintsUsed,
+        accuracy: req.body.accuracy,
+        userId: ObjectId(req.body.userId),
+        gameId: ObjectId(req.body.gameId)
+      };
 
       collection.update(
         {_id: ObjectId(id)},
