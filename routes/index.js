@@ -1,8 +1,10 @@
 var express = require('express');
 var multer = require('multer');
 var router = express.Router();
-
+var connectionString = "mongodb://dishant:123456@ds053196.mlab.com:53196/coursegame";
+var MongoClient = require('mongodb').MongoClient;
 var materialId = "";
+var ObjectId = require('mongodb').ObjectID;
 
 var storage = multer.diskStorage({ //multers disk storage settings
         destination: function (req, file, cb) {
@@ -39,7 +41,7 @@ router.post('/upload/:id', function(req, res)
   });
 
 
-router.post('/uploadMaterial', function() {
+router.post('/uploadMaterial', function(req,res) {
   MongoClient.connect(connectionString, function(err, db) {
     var collection = db.collection('Material');
 
@@ -50,7 +52,7 @@ router.post('/uploadMaterial', function() {
     }, function(err, material) {
       if (err) throw err;
       materialId = material.ops[0]._id;
-      res.json("Successfully uploaded your file." + material.ops[0]);
+      res.json({"Status": true, "Result": "Successfully uploaded your file.", "Material": material.ops[0]});
     });
   });
 });
