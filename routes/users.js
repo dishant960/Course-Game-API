@@ -336,13 +336,53 @@ router.post('/app/forgotPass',function(req,res){
 
 
 // localhost:3000/users/changePassword/:id
-router.put('/changePassword/:id', function(req, res, next){
+router.post('/resetPassword', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     try {
       if(err) throw err;
       else {
         var collection = db.collection('User');
-        var id = req.params.id;
+        var token = req.body.token;
+        var password = req.body.password;
+
+        var decoded = jwt.decode(token, 'secretcode');
+        var str = "";
+        var fetched_username = decoded.iss;
+        var encrypted_password = encrypt(password);
+
+        function encrypt(text){
+          var cipher = crypto.createCipher(algorithm,password)
+          var crypted = cipher.update(text,'utf8','hex')
+          crypted += cipher.final('hex');
+          return crypted;
+        }
+
+        collection.update(
+          {username: fetched_username},
+          {$set: {password: encrypted_password}},
+          function(err, object) {
+              if (err) throw err;
+              else{
+                  res.json({"Status":true, "Result":"Password updated successfully."});
+              }
+          });
+        }
+    }
+    catch (err) {
+      console.log(err);
+    }
+  });
+});
+
+
+// localhost:3000/users/changePassword/:id
+router.post('/changePassword', function(req, res, next){
+  MongoClient.connect(connectionString, function(err, db) {
+    try {
+      if(err) throw err;
+      else {
+        var collection = db.collection('User');
+        var id = req.body._id;
         var password = req.body.password;
 
         var encrypted_password = encrypt(password);
