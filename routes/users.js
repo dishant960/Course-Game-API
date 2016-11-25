@@ -239,7 +239,7 @@ function tokenValidate(token, user) {
 }
 
 //localhost:3000/users/forgotPass
-router.post('/forgotPass',function(req,res){
+router.post('/web/forgotPass',function(req,res){
   var smtpTransport = nodemailer.createTransport("SMTP",{
       service: "Gmail",
       auth: {
@@ -271,7 +271,7 @@ router.post('/forgotPass',function(req,res){
               if(err) throw err;
               else {
                 console.log("Mail sent");
-                res.json({"Status":true, "Result":"Message successfully sent.", "Token Object": token});
+                res.json({"Status":true, "Result":"Mail successfully sent.", "Token Object": token});
               }
             });
           }
@@ -283,6 +283,39 @@ router.post('/forgotPass',function(req,res){
     }
   });
 });
+
+
+
+
+//localhost:3000/users/forgotPass
+router.post('/app/forgotPass',function(req,res){
+  var code = crypto.createHash('md5').update(Math.random().toString()).digest('hex').substring(0,4);
+
+  var smtpTransport = nodemailer.createTransport("SMTP",{
+      service: "Gmail",
+      auth: {
+          user: "daiictse2@gmail.com",
+          pass: "saurabhtiwari1"
+      }
+  });
+
+  var username = req.body.username;
+
+  var mailOptions={
+      to : username,
+      subject : "Course-Game Password Recovery",
+      text : "You have requested for password change. Your One-Time-Password (OTP) is " + code + "."
+    }
+
+  smtpTransport.sendMail(mailOptions, function(err, response){
+    if(err) throw err;
+    else {
+      console.log("Mail sent");
+      res.json({"Status":true, "Result":"Mail successfully sent.", "Token Code": code});
+    }
+  });
+});
+
 
 // localhost:3000/users/changePassword/:id
 router.put('/changePassword/:id', function(req, res, next){
