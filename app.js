@@ -27,7 +27,7 @@ var app = express();
     var header = function(request,response, next){
       response.header("Access-Control-Allow-Origin",'*');
       response.header("Access-Control-Allow-Methods",'GET,POST,PUT,DELETE');
-      response.header("Access-Control-Allow-Headers",'Content-Type, x-access-token');
+      response.header("Access-Control-Allow-Headers",'Content-Type, x-access-token, Origin, X-Requested-With, Accept');
       next();
     }
 
