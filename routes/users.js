@@ -97,8 +97,7 @@ function token_generator(username) {
 router.post('/login',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     try {
-      if(err) throw err;
-      else {
+      if(!err) {
         var collection = db.collection('User');
         var username = req.body.username;
         var password = req.body.password;
@@ -113,7 +112,9 @@ router.post('/login',function(req, res, next){
         }
 
         collection.findOne({"username": username, "password": encrypted_password}, {password: 0}, function(err, user) {
-          if (err) throw err;
+          if (err) {
+            res.send({"Status":false,"Result":err});
+          }
           else {
             if(!user) {
               res.send({"Status":false,"Result":"Wrong username or password supplied."});
@@ -125,10 +126,14 @@ router.post('/login',function(req, res, next){
                 collection = db.collection('Token');
                 collection.remove({username: user.username},
                   function(err, object) {
-                      if (err) throw err;
+                      if (err)  {
+                        res.send({"Status":false,"Result":err});
+                      }
                       else {
                         collection.insert(token, function(err, obj) {
-                          if (err) throw err;
+                          if (err) {
+                            res.send({"Status":false,"Result":err});
+                          }
                           else {
                             res.json({"Status" : true , "Result": "Successfully logged in.", "token" : token.tokenString, "LoggedUser" : user});
                           }
@@ -154,55 +159,60 @@ router.post('/login',function(req, res, next){
 // localhost:3000/users/register
 router.post('/register',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(err) throw err;
-    else {
-      var collection = db.collection('User');
-      var user = req.body;
-      var username = req.body.username;
-      var password = req.body.password;
+    try {
+      if(err) throw err;
+      else {
+        var collection = db.collection('User');
+        var user = req.body;
+        var username = req.body.username;
+        var password = req.body.password;
 
-      var encrypted_password = encrypt(password);
+        var encrypted_password = encrypt(password);
 
-      function encrypt(text){
-        var cipher = crypto.createCipher(algorithm,password)
-        var crypted = cipher.update(text,'utf8','hex')
-        crypted += cipher.final('hex');
-        console.log(crypted);
-        return crypted;
-      }
-
-      collection.findOne({"username": username}, function(err, user) {
-        if (err) throw err;
-        else {
-          if(user) {
-            res.send({"Status":false,"Result":"Username already exists."});
-          }
-          else {
-            collection.insert({
-              firstName: req.body.firstName,
-              lastName: req.body.lastName,
-              userType: req.body.userType,
-              username: req.body.username,
-              password: encrypted_password,
-              contact: req.body.contact,
-              specialization: req.body.specialization,
-              university: req.body.university,
-              city: req.body.city,
-              country: req.body.country,
-              facultyType: req.body.facultyType,
-              programme: req.body.programme,
-              studentId: req.body.studentId,
-              year: req.body.year,
-              semester: req.body.semester
-            }, function(err, user) {
-          		if (err) throw err;
-              else {
-                res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": user.ops[0]});
-              }
-            });
-          }
+        function encrypt(text){
+          var cipher = crypto.createCipher(algorithm,password)
+          var crypted = cipher.update(text,'utf8','hex')
+          crypted += cipher.final('hex');
+          console.log(crypted);
+          return crypted;
         }
-      });
+
+        collection.findOne({"username": username}, function(err, user) {
+          if (err) throw err;
+          else {
+            if(user) {
+              res.send({"Status":false,"Result":"Username already exists."});
+            }
+            else {
+              collection.insert({
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                userType: req.body.userType,
+                username: req.body.username,
+                password: encrypted_password,
+                contact: req.body.contact,
+                specialization: req.body.specialization,
+                university: req.body.university,
+                city: req.body.city,
+                country: req.body.country,
+                facultyType: req.body.facultyType,
+                programme: req.body.programme,
+                studentId: req.body.studentId,
+                year: req.body.year,
+                semester: req.body.semester
+              }, function(err, user) {
+            		if (err) throw err;
+                else {
+                  res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": user.ops[0]});
+                }
+              });
+            }
+          }
+        });
+      }
+    }
+    catch(err) {
+      console.log(err);
     }
   });
 });
@@ -257,34 +267,39 @@ router.post('/web/forgotPass',function(req,res){
   var username = req.body.username;
 
   MongoClient.connect(connectionString, function(err, db) {
-    if(err) throw err;
-    else {
-      var collection = db.collection('Token');
-      collection.findOne({"username": username}, function(err, token) {
-        if (err) throw err;
-        else {
-          var msg = tokenValidate(token.tokenString, username);
-          if(msg == "Authorized token") {
-            var mailOptions={
-              to : username,
-              subject : "Password Recovery",
-              text : "This mail is from Course-Game. You have requested for password change. So to change the password click to the below link." +
-                     "http://herokuapp.com/" + token.tokenString
-            }
-
-            smtpTransport.sendMail(mailOptions, function(err, response){
-              if(err) throw err;
-              else {
-                console.log("Mail sent");
-                res.json({"Status":true, "Result":"Mail successfully sent.", "Token Object": token});
-              }
-            });
-          }
+    try {
+      if(err) throw err;
+      else {
+        var collection = db.collection('Token');
+        collection.findOne({"username": username}, function(err, token) {
+          if (err) throw err;
           else {
-            res.json({"Status":true, "Result":"Token is not authorized."});
+            var msg = tokenValidate(token.tokenString, username);
+            if(msg == "Authorized token") {
+              var mailOptions={
+                to : username,
+                subject : "Password Recovery",
+                text : "This mail is from Course-Game. You have requested for password change. So to change the password click to the below link." +
+                       "http://herokuapp.com/" + token.tokenString
+              }
+
+              smtpTransport.sendMail(mailOptions, function(err, response){
+                if(err) throw err;
+                else {
+                  console.log("Mail sent");
+                  res.json({"Status":true, "Result":"Mail successfully sent.", "Token Object": token});
+                }
+              });
+            }
+            else {
+              res.json({"Status":true, "Result":"Token is not authorized."});
+            }
           }
-        }
-      });
+        });
+      }
+    }
+    catch(err) {
+      console.log(err);
     }
   });
 });
@@ -323,73 +338,88 @@ router.post('/app/forgotPass',function(req,res){
 // localhost:3000/users/changePassword/:id
 router.put('/changePassword/:id', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(err) throw err;
-    else {
-      var collection = db.collection('User');
-      var id = req.params.id;
-      var password = req.body.password;
+    try {
+      if(err) throw err;
+      else {
+        var collection = db.collection('User');
+        var id = req.params.id;
+        var password = req.body.password;
 
-      var encrypted_password = encrypt(password);
+        var encrypted_password = encrypt(password);
 
-      function encrypt(text){
-        var cipher = crypto.createCipher(algorithm,password)
-        var crypted = cipher.update(text,'utf8','hex')
-        crypted += cipher.final('hex');
-        console.log(crypted);
-        return crypted;
-      }
+        function encrypt(text){
+          var cipher = crypto.createCipher(algorithm,password)
+          var crypted = cipher.update(text,'utf8','hex')
+          crypted += cipher.final('hex');
+          console.log(crypted);
+          return crypted;
+        }
 
-      collection.update(
-        {_id: ObjectId(id)},
-        {$set: {password: encrypted_password}},
-        function(err, object) {
-            if (err) throw err;
-            else{
-                res.json({"Status":true, "Result":"Password updated successfully."});
-            }
-        });
-      }
+        collection.update(
+          {_id: ObjectId(id)},
+          {$set: {password: encrypted_password}},
+          function(err, object) {
+              if (err) throw err;
+              else{
+                  res.json({"Status":true, "Result":"Password updated successfully."});
+              }
+          });
+        }
+    }
+    catch (err) {
+      console.log(err);
+    }
   });
 });
 
 // localhost:3000/users/update/:id
 router.put('/update/:id', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(err) throw err;
-    else {
-      var collection = db.collection('User');
-      var id = req.params.id;
-      var updatedUser = req.body;
+    try {
+      if(err) throw err;
+      else {
+        var collection = db.collection('User');
+        var id = req.params.id;
+        var updatedUser = req.body;
 
-      collection.update(
-        {_id: ObjectId(id)},
-        {$set: updatedUser},
-        function(err, object) {
-            if (err) throw err;
-            else{
-                res.json({"Status":true, "Result":"Record updated successfully."});
-            }
-        });
-      }
+        collection.update(
+          {_id: ObjectId(id)},
+          {$set: updatedUser},
+          function(err, object) {
+              if (err) throw err;
+              else{
+                  res.json({"Status":true, "Result":"Record updated successfully."});
+              }
+          });
+        }
+    }
+    catch(err) {
+      console.log(err);
+    }
   });
 });
 
 // localhost:3000/users/delete/:id
 router.delete('/delete/:id', function(req,res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(err) throw err;
-    else {
-      var collection = db.collection('User');
-      var id = req.params.id;
+    try {
+      if(err) throw err;
+      else {
+        var collection = db.collection('User');
+        var id = req.params.id;
 
-      console.log(id);
-      collection.remove({_id: ObjectId(id)},
-        function(err, object) {
-            if (err) throw err;
-            else {
-                res.json({"Status":true, "Result":"Record deleted successfully."});
-            }
-        });
+        console.log(id);
+        collection.remove({_id: ObjectId(id)},
+          function(err, object) {
+              if (err) throw err;
+              else {
+                  res.json({"Status":true, "Result":"Record deleted successfully."});
+              }
+          });
+      }
+    }
+    catch (err) {
+      console.log(err);
     }
   });
 });
