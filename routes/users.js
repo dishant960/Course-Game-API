@@ -96,51 +96,56 @@ function token_generator(username) {
 // localhost:3000/users/login
 router.post('/login',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(err) throw err;
-    else {
-      var collection = db.collection('User');
-      var username = req.body.username;
-      var password = req.body.password;
-      var userType = req.body.userType;
-      var encrypted_password = encrypt(password);
+    try {
+      if(err) throw err;
+      else {
+        var collection = db.collection('User');
+        var username = req.body.username;
+        var password = req.body.password;
+        var userType = req.body.userType;
+        var encrypted_password = encrypt(password);
 
-      function encrypt(text){
-        var cipher = crypto.createCipher(algorithm,password)
-        var crypted = cipher.update(text,'utf8','hex')
-        crypted += cipher.final('hex');
-        return crypted;
-      }
+        function encrypt(text){
+          var cipher = crypto.createCipher(algorithm,password)
+          var crypted = cipher.update(text,'utf8','hex')
+          crypted += cipher.final('hex');
+          return crypted;
+        }
 
-      collection.findOne({"username": username, "password": encrypted_password}, {password: 0}, function(err, user) {
-        if (err) throw err;
-        else {
-          if(!user) {
-            res.send({"Status":false,"Result":"Wrong username or password supplied."});
-          }
+        collection.findOne({"username": username, "password": encrypted_password}, {password: 0}, function(err, user) {
+          if (err) throw err;
           else {
-            if(userType == user.userType) {
-              var token = token_generator(user.username);
-
-              collection = db.collection('Token');
-              collection.remove({username: user.username},
-                function(err, object) {
-                    if (err) throw err;
-                    else {
-                      collection.insert(token, function(err, obj) {
-                        if (err) throw err;
-                        else {
-                          res.json({"Status" : true , "Result": "Successfully logged in.", "token" : token.tokenString, "LoggedUser" : user});
-                        }
-                      });
-                    }
-                });
+            if(!user) {
+              res.send({"Status":false,"Result":"Wrong username or password supplied."});
             }
             else {
-              res.send({"Status":false,"Result":"User type is not valid."});
+              if(userType == user.userType) {
+                var token = token_generator(user.username);
+
+                collection = db.collection('Token');
+                collection.remove({username: user.username},
+                  function(err, object) {
+                      if (err) throw err;
+                      else {
+                        collection.insert(token, function(err, obj) {
+                          if (err) throw err;
+                          else {
+                            res.json({"Status" : true , "Result": "Successfully logged in.", "token" : token.tokenString, "LoggedUser" : user});
+                          }
+                        });
+                      }
+                  });
+              }
+              else {
+                res.send({"Status":false,"Result":"User type is not valid."});
+              }
             }
           }
-        }
-      });
+        });
+      }
+    }
+    catch(err) {
+      console.log(err);
     }
   });
 });
