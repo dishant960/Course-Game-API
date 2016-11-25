@@ -77,8 +77,8 @@ router.post('/insert',function(req, res, next){
           var fcm = new FCM(serverKey);
 
           var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-              //to:'/topics/' + req.body.courseId,
-              to:'/topics/temp1',
+              to:'/topics/' + req.body.courseId,
+              //to:'/topics/temp1',
               notification: {
                   title: req.body.title,
                   body: req.body.desc,
