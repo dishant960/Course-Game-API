@@ -238,7 +238,7 @@ function tokenValidate(token, user) {
 	}
 }
 
-//localhost:3000/users/forgotPass
+//localhost:3000/users/web/forgotPass
 router.post('/web/forgotPass',function(req,res){
   var smtpTransport = nodemailer.createTransport("SMTP",{
       service: "Gmail",
@@ -285,9 +285,7 @@ router.post('/web/forgotPass',function(req,res){
 });
 
 
-
-
-//localhost:3000/users/forgotPass
+//localhost:3000/users/app/forgotPass
 router.post('/app/forgotPass',function(req,res){
   var code = crypto.createHash('md5').update(Math.random().toString()).digest('hex').substring(0,4);
 
