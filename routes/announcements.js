@@ -46,12 +46,11 @@ router.get('/getByCourse/:id',function(req, res, next){
     if(err) throw err;
     else {
       var collection = db.collection('Announcement');
-      var id = req.params.id;
 
-      collection.findOne({"courseId": id}, function(err, announcement) {
+      collection.find({courseId: new ObjectId(req.params.id)}).toArray(function(err, record) {
         if (err) throw err;
         else {
-          res.send({"Status":true,"Result":announcement});
+          res.send({"Status":true,"Result":record});
         }
       });
     }
