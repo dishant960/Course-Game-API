@@ -27,6 +27,7 @@ router.get('/', function(req, res, next) {
 /** API path that will upload the files */
 router.post('/upload/:id', function(req, res)
  {
+   materialId = req.params.id;
     upload(req,res,function(err){
         if(err){
             console.log(err);
