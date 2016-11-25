@@ -280,7 +280,7 @@ router.post('/web/forgotPass',function(req,res){
                 to : username,
                 subject : "Password Recovery",
                 text : "This mail is from Course-Game. You have requested for password change. So to change the password click to the below link." +
-                       "http://herokuapp.com/" + token.tokenString
+                       "http://localhost:8080/#/forgotPass/" + token.tokenString
               }
 
               smtpTransport.sendMail(mailOptions, function(err, response){
