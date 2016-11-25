@@ -59,7 +59,7 @@ router.get('/uploaded/:file(*)', function (req, res){
   file = req.params.file;
   var dirname = __dirname + '/public/';
   var img = fs.readFileSync(dirname + file);
-  res.writeHead(200, {'Content-Type': 'image/png' });
+  res.writeHead(200, {'Content-Type': '*' });
   res.end(img, 'binary');
   console.log("OK");
 });
