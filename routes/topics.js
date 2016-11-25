@@ -84,13 +84,20 @@ router.post('/insert',function(req, res, next){
 
 
 // localhost:3000/topics/update/:id
-router.put('/update/:id', function(req, res, next){
+router.post('/update', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(err) throw err;
     else {
       var collection = db.collection('Topic');
-      var id = req.params.id;
-      var updatedTopic = req.body;
+      var id = req.body._id;
+      var updatedTopic = {
+        name: req.body.name,
+        difLevel: req.body.difLevel,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        desc: req.body.desc,
+        courseId: ObjectId(req.body.courseId)
+    };
 
       collection.update(
         {_id: ObjectId(id)},

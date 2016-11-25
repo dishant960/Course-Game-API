@@ -373,14 +373,29 @@ router.put('/changePassword/:id', function(req, res, next){
 });
 
 // localhost:3000/users/update/:id
-router.put('/update/:id', function(req, res, next){
+router.post('/update', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     try {
       if(err) throw err;
       else {
         var collection = db.collection('User');
-        var id = req.params.id;
-        var updatedUser = req.body;
+        var id = req.body._id;
+        var updatedUser = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            userType: req.body.userType,
+            username: req.body.username,
+            contact: req.body.contact,
+            specialization: req.body.specialization,
+            university: req.body.university,
+            city: req.body.city,
+            country: req.body.country,
+            facultyType: req.body.facultyType,
+            programme: req.body.programme,
+            studentId: req.body.studentId,
+            year: req.body.year,
+            semester: req.body.semester
+        };
 
         collection.update(
           {_id: ObjectId(id)},

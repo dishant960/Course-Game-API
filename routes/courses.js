@@ -256,6 +256,7 @@ router.post('/insert',function(req, res, next){
           sem: BTECH_sem
         }],
         desc: req.body.desc,
+        isOpen: req.body.isOpen,
         isActive: req.body.isActive,
         userId: req.body.userId
       }, function(err, user) {
@@ -299,13 +300,13 @@ router.post('/insert12',function(req, res, next){
 });
 
 
-// localhost:3000/courses/active/:id
-router.put('/active/:id', function(req, res, next){
+// localhost:3000/courses/active
+router.post('/active', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(err) throw err;
     else {
       var collection = db.collection('Course');
-      var id = req.params.id;
+      var id = req.body._id;
       var activate = req.body.isActive;
 
       collection.update(
@@ -322,8 +323,8 @@ router.put('/active/:id', function(req, res, next){
 });
 
 
-// localhost:3000/courses/update/:id
-router.put('/update/:id', function(req, res, next){
+// localhost:3000/courses/update
+router.post('/update', function(req, res, next){
   var programs = [];
   var MSCIT_sem = [];
   var BTECH_sem = [];
@@ -338,7 +339,7 @@ router.put('/update/:id', function(req, res, next){
     if(err) throw err;
     else {
       var collection = db.collection('Course');
-      var id = req.params.id;
+      var id = req.body._id;
       var updatedRecord = {
         name: req.body.name,
         year: req.body.year,
@@ -351,6 +352,7 @@ router.put('/update/:id', function(req, res, next){
           sem: BTECH_sem
         }],
         desc: req.body.desc,
+        isOpen: req.body.isOpen,
         isActive: req.body.isActive,
         userId: req.body.userId
       };

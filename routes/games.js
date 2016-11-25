@@ -132,13 +132,26 @@ router.post('/insert',function(req, res, next){
 });
 
 // localhost:3000/games/update/:id
-router.put('/update/:id', function(req, res, next){
+router.post('/update', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(err) throw err;
     else {
       var collection = db.collection('Game');
-      var id = req.params.id;
-      var updatedGame = req.body;
+      var id = req.body._id;
+      var updatedGame = {
+        title: req.body.title,
+        difLevel: req.body.difLevel,
+        points: req.body.points,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        maxAttempt: req.body.maxAttempt,
+        minScore: req.body.minScore,
+        desc: req.body.desc,
+        hintUrl: req.body.hintUrl,
+        isActive: req.body.isActive,
+        topicId: ObjectId(req.body.topicId),
+        gameId: ObjectId(req.body.gameId)
+      };
 
       collection.update(
         {_id: ObjectId(id)},
