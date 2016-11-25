@@ -58,14 +58,25 @@ router.get('/getById/:id',function(req, res, next){
               for(var i = 0; i < topic.length; i++) {
                 topic_ids[i]=topic[i]._id;
               }
-              collection.find().toArray(function(err, games) {
+              collection.find({ topicId: { $in: topic_ids } }).toArray(function(err, games) {
                 if (err) throw err;
                 else {
-                  collection = db.collection('Material');
-                  collection.find({ topicId: { $in: topic_ids } }).toArray(function(err, materials) {
-                    if (err) throw err;
+
+                  collection = db.collection('GameList');
+                  var gameList_ids = [];
+                  for(var i = 0; i < games.length; i++) {
+                    gameList_ids[i]=games[i].gameId;
+                  }
+                  collection.find({ _id: { $in: gameList_ids } }).toArray(function(err, gameLists) {
+                    if(err) throw err;
                     else {
-                      res.send({"Status":true, "course":course, "topics": topic, "games": games, "materials": materials});
+                      collection = db.collection('Material');
+                      collection.find({ topicId: { $in: topic_ids } }).toArray(function(err, materials) {
+                        if (err) throw err;
+                        else {
+                          res.send({"Status":true, "course":course, "topics": topic, "games": games, "gameList": gameLists, "materials": materials});
+                        }
+                      });
                     }
                   });
                 }
@@ -217,7 +228,7 @@ router.post('/tags/insert',function(req, res, next){
   });
 });
 
-router.post('/insert12',function(req, res, next){
+router.post('/insert',function(req, res, next){
   var programs = [];
   var MSCIT_sem = [];
   var BTECH_sem = [];
@@ -258,7 +269,7 @@ router.post('/insert12',function(req, res, next){
 });
 
 // localhost:3000/courses/insert
-router.post('/insert',function(req, res, next){
+router.post('/insert12',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
     if(err) throw err;
     else {
