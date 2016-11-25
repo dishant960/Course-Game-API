@@ -129,7 +129,7 @@ router.post('/login',function(req, res, next){
                       collection.insert(token, function(err, obj) {
                         if (err) throw err;
                         else {
-                          res.json({"status" : true , "Result": "Successfully logged in.", "token" : token.tokenString, "LoggedUser" : user});
+                          res.json({"Status" : true , "Result": "Successfully logged in.", "token" : token.tokenString, "LoggedUser" : user});
                         }
                       });
                     }
