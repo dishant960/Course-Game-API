@@ -9,12 +9,11 @@ var fs = require('fs');
 // localhost:3000/materials
 router.get('/', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Material');
       collection.find().toArray(function(err, materials) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":materials});
         }
@@ -26,11 +25,13 @@ router.get('/', function(req, res, next) {
 // localhost:3000/materials/upload
 router.post('/upload', function(req, res) {
   var path=require('path'); // add path module
-    fs.readFile(req.files.image.path, function (err, data){ // readfilr from the given path
+
+  fs.readFile(req.files.image.path, function (err, data){ // readfilr from the given path
     var dirname = __dirname + '/public/'; // path.resolve(“.”) get application directory path
     var newPath = dirname +   req.files.image.originalFilename; // add the file name
+
     fs.writeFile(newPath, data, function (err) { // write file in uploads folder
-      if(err){
+      if(err) {
         res.json("Failed to upload your file");
       }
       else {
@@ -41,9 +42,8 @@ router.post('/upload', function(req, res) {
           collection.insert({
             link: req.files.image.originalFilename
           }, function(err, material) {
-            if (err) {
-              res.json({"Status":false,"Result":err});
-            }
+            if (err) throw err;
+
             res.json("Successfully uploaded your file");
           });
         });
@@ -67,14 +67,13 @@ router.get('/uploaded/:file(*)', function (req, res){
 // localhost:3000/materials/getById/:id
 router.get('/getById/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Material');
       var id = req.params.id;
 
       collection.findOne({"_id": new ObjectId(id)}, function(err, material) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":material});
         }
@@ -86,7 +85,8 @@ router.get('/getById/:id',function(req, res, next){
 // localhost:3000/materials/insert
 router.post('/insert',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Material');
       var material = req.body;
 
@@ -99,9 +99,7 @@ router.post('/insert',function(req, res, next){
         link: req.body.link,
         topicId: ObjectId(req.body.topicId)
     }, function(err, material) {
-    		if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+    		if (err) throw err;
         else {
           res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": material.ops[0]});
         }
@@ -114,7 +112,8 @@ router.post('/insert',function(req, res, next){
 // localhost:3000/materials/update/:id
 router.put('/update/:id', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Material');
       var id = req.params.id;
       var updatedMaterial = req.body;
@@ -123,9 +122,8 @@ router.put('/update/:id', function(req, res, next){
         {_id: ObjectId(id)},
         {$set: updatedMaterial},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record updated successfully."});
             }
         });
@@ -136,16 +134,16 @@ router.put('/update/:id', function(req, res, next){
 // localhost:3000/materials/delete/:id
 router.delete('/delete/:id', function(req,res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Material');
       var id = req.params.id;
 
       console.log(id);
       collection.remove({_id: ObjectId(id)},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record deleted successfully."});
             }
         });

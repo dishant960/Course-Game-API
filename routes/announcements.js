@@ -8,12 +8,11 @@ var ObjectId = require('mongodb').ObjectID;
 // localhost:3000/announcements
 router.get('/', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Announcement');
       collection.find().toArray(function(err, announcement) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":announcement});
         }
@@ -25,14 +24,13 @@ router.get('/', function(req, res, next) {
 // localhost:3000/announcements/getById/:id
 router.get('/getById/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Announcement');
       var id = req.params.id;
 
       collection.findOne({"_id": new ObjectId(id)}, function(err, announcement) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":announcement});
         }
@@ -44,7 +42,8 @@ router.get('/getById/:id',function(req, res, next){
 // localhost:3000/announcements/insert
 router.post('/insert',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Announcement');
       var announcement = req.body;
 
@@ -58,9 +57,7 @@ router.post('/insert',function(req, res, next){
         userId: ObjectId(req.body.userId),
         courseId: ObjectId(req.body.courseId)
     }, function(err, announcement) {
-    		if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+    		if (err) throw err;
         else {
           res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": announcement.ops[0]});
         }
@@ -73,7 +70,8 @@ router.post('/insert',function(req, res, next){
 // localhost:3000/announcements/update/:id
 router.put('/update/:id', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Announcement');
       var id = req.params.id;
       var updatedAnnouncement = req.body;
@@ -82,9 +80,8 @@ router.put('/update/:id', function(req, res, next){
         {_id: ObjectId(id)},
         {$set: updatedAnnouncement},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record updated successfully."});
             }
         });
@@ -95,16 +92,16 @@ router.put('/update/:id', function(req, res, next){
 // localhost:3000/announcements/delete/:id
 router.delete('/delete/:id', function(req,res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Announcement');
       var id = req.params.id;
 
       console.log(id);
       collection.remove({_id: ObjectId(id)},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record deleted successfully."});
             }
         });

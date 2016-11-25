@@ -8,12 +8,11 @@ var ObjectId = require('mongodb').ObjectID;
 // localhost:3000/performances
 router.get('/', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Performance');
       collection.find().toArray(function(err, performances) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":performances});
         }
@@ -25,14 +24,13 @@ router.get('/', function(req, res, next) {
 // localhost:3000/performances/getById/:id
 router.get('/getById/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Performance');
       var id = req.params.id;
 
       collection.findOne({"_id": new ObjectId(id)}, function(err, performance) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":performance});
         }
@@ -44,7 +42,8 @@ router.get('/getById/:id',function(req, res, next){
 // localhost:3000/performances/insert
 router.post('/insert',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Performance');
       var performance = req.body;
 
@@ -58,9 +57,7 @@ router.post('/insert',function(req, res, next){
         userId: ObjectId(req.body.userId),
         gameId: ObjectId(req.body.gameId)
     }, function(err, performance) {
-    		if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+    		if (err) throw err;
         else {
           res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": performance.ops[0]});
         }
@@ -73,7 +70,8 @@ router.post('/insert',function(req, res, next){
 // localhost:3000/performances/update/:id
 router.put('/update/:id', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('performance');
       var id = req.params.id;
       var updatedPerformance = req.body;
@@ -82,9 +80,8 @@ router.put('/update/:id', function(req, res, next){
         {_id: ObjectId(id)},
         {$set: updatedPerformance},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record updated successfully."});
             }
         });
@@ -95,16 +92,16 @@ router.put('/update/:id', function(req, res, next){
 // localhost:3000/performances/delete/:id
 router.delete('/delete/:id', function(req,res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Performance');
       var id = req.params.id;
 
       console.log(id);
       collection.remove({_id: ObjectId(id)},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record deleted successfully."});
             }
         });

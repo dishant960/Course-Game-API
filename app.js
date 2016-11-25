@@ -17,10 +17,12 @@ var performances = require('./routes/performances');
 var announcements = require('./routes/announcements');
 var enrollments = require('./routes/enrollments');
 
+var jwt = require('jwt-simple');
 var app = express();
 
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'jade');
+    app.set('jwtSecretToken', 'iamthesecret');
 
     var header = function(request,response, next){
       response.header("Access-Control-Allow-Origin",'*');
@@ -40,43 +42,6 @@ var app = express();
       var path =__dirname+'/public/'+file;
       res.download(path);
     });
-
-
-
-
-    var nodemailer = require("nodemailer");
-
-    var smtpTransport = nodemailer.createTransport("SMTP",{
-        service: "Gmail",
-        auth: {
-            user: "daiictse2@gmail.com",
-            pass: "saurabhtiwari1"
-        }
-    });
-
-    app.get('/send',function(req,res){
-      var mailOptions={
-        to : "hardisk.uvs1994@gmail.com",
-        subject : "Password Recovery",
-        text : "This mail is from Course-Game. You have requested for password change. So to change the password click to the below link."
-      }
-      console.log(mailOptions);
-      smtpTransport.sendMail(mailOptions, function(error, response){
-        if(error){
-          console.log(error);
-          res.end("error");
-        }
-        else{
-          console.log("Message sent: " + response.message);
-          res.end("sent");
-        }
-      });
-    });
-
-
-
-
-
 
     app.use(express.static('../client'));
     app.use(bodyParser.json());
@@ -116,7 +81,6 @@ var app = express();
           error: err
         });
       });
-      console.log('running on 3000...');
 }
 
 // production error handler

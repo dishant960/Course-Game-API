@@ -9,12 +9,11 @@ var ObjectId = require('mongodb').ObjectID;
 // localhost:3000/courses
 router.get('/', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Course');
       collection.find().toArray(function(err, record) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":record});
         }
@@ -26,12 +25,11 @@ router.get('/', function(req, res, next) {
 // localhost:3000/courses/tags
 router.get('/tags', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Tag');
       collection.find().toArray(function(err, record) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":record});
         }
@@ -43,20 +41,17 @@ router.get('/tags', function(req, res, next) {
 // localhost:3000/courses/getById/:id
 router.get('/getById/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Course');
       var id = req.params.id;
 
       collection.findOne({"_id": new ObjectId(id)}, function(err, course) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           collection = db.collection('Topic');
           collection.find({"courseId": new ObjectId(course._id)}).toArray(function(err, topic) {
-            if (err) {
-        		  res.json({"Status":false,"Result":err});
-            }
+            if (err) throw err;
             else {
               collection = db.collection('Game');
               var topic_ids = [];
@@ -64,15 +59,11 @@ router.get('/getById/:id',function(req, res, next){
                 topic_ids[i]=topic[i]._id;
               }
               collection.find({ "topicId": { $in: topic_ids } }).toArray(function(err, games) {
-                if (err) {
-            		  res.json({"Status":false,"Result":err});
-                }
+                if (err) throw err;
                 else {
                   collection = db.collection('Material');
                   collection.find({ topicId: { $in: topic_ids } }).toArray(function(err, materials) {
-                    if (err) {
-                		  res.json({"Status":false,"Result":err});
-                    }
+                    if (err) throw err;
                     else {
                       res.send({"Status":true, "course":course, "topics": topic, "games": games, "materials": materials});
                     }
@@ -90,14 +81,13 @@ router.get('/getById/:id',function(req, res, next){
 // localhost:3000/courses/getByFaculty/:id
 router.get('/getByFaculty/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Course');
       var user_id = req.params.id;
 
       collection.find({userId: user_id}).toArray(function(err, record) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":record});
         }
@@ -109,23 +99,20 @@ router.get('/getByFaculty/:id',function(req, res, next){
 // localhost:3000/courses/getByStd/:id
 router.get('/getByStd/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('User');
       var id = req.params.id;
 
       collection.findOne({"_id": new ObjectId(id)}, function(err, user) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           var prog = user.programme;
           var sem_array = [user.semester];
 
           collection = db.collection('Enrollment');
           collection.find({"userId": new ObjectId(req.params.id)}).toArray(function(err, enrolled) {
-            if(err) {
-              res.json({"Status":false,"Result":err});
-            }
+            if(err) throw err;
             else {
               if(enrolled) {
                 var enrolledCourse_ids = [];
@@ -140,9 +127,7 @@ router.get('/getByStd/:id',function(req, res, next){
                   {$match: {'programme.sem': {$in: sem_array}}},
                   {$match: {'_id': {$nin: enrolledCourse_ids}}}
                 ]).toArray(function(err, record) {
-                  if (err) {
-              		  res.json({"Status":false,"Result":err});
-                  }
+                  if (err) throw err;
                   else {
                     res.send({"Status":true,"Result":record});
                   }
@@ -160,23 +145,20 @@ router.get('/getByStd/:id',function(req, res, next){
 // localhost:3000/courses/getByStd/:id
 router.get('/getByStd1/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('User');
       var id = req.params.id;
 
       collection.findOne({"_id": new ObjectId(id)}, function(err, user) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           var sem = user.semester;
           var prog = user.programme;
 
           collection = db.collection('Enrollment');
           collection.find({"userId": new ObjectId(req.params.id)}).toArray(function(err, enrolled) {
-            if (err) {
-        		  res.json({"Status":false,"Result":err});
-            }
+            if (err) throw err;
             else {
               if(enrolled) {
                 var enrolledCourse_ids = [];
@@ -200,9 +182,7 @@ router.get('/getByStd1/:id',function(req, res, next){
                     }]
                   }]
                 }).toArray(function(err, courses) {
-                  if (err) {
-              		  res.json({"Status":false,"Result":err});
-                  }
+                  if (err) throw err;
                   else {
                     res.send({"Status":true,"Result":courses});
                   }
@@ -221,15 +201,14 @@ router.get('/getByStd1/:id',function(req, res, next){
 // localhost:3000/courses/tags/insert
 router.post('/tags/insert',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Tag');
 
     	collection.insert({
         name: req.body.name
       }, function(err, tag) {
-    		if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+    		if (err) throw err;
         else {
           res.send({"Status":true,"Result":"Record inserted successfully.", "insertedRecord": tag.ops[0]});
         }
@@ -251,7 +230,8 @@ router.post('/insert12',function(req, res, next){
   }
   //console.log(programs, MSCIT_sem, BTECH_sem, ARD_sem);
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Course');
       collection.insert({
         name: req.body.name,
@@ -268,9 +248,7 @@ router.post('/insert12',function(req, res, next){
         isActive: req.body.isActive,
         userId: req.body.userId
       }, function(err, user) {
-    		if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+    		if (err) throw err;
         else {
           res.send({"Status":true,"Result":"Record inserted successfully.", "insertedRecord": user.ops[0]});
         }
@@ -282,15 +260,14 @@ router.post('/insert12',function(req, res, next){
 // localhost:3000/courses/insert
 router.post('/insert',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Course');
       var user = req.body.userId;
       var tag = req.body.tag;
 
       collection.findOne({"userId": new ObjectId(user), "tag": tag}, function(err, user) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           if(user) {
             console.log(user);
@@ -298,9 +275,7 @@ router.post('/insert',function(req, res, next){
           }
           else {
             collection.insert(req.body, function(err, user) {
-          		if (err) {
-          		  res.json({"Status":false,"Result":err});
-              }
+          		if (err) throw err;
               else {
                 res.send({"Status":true,"Result":"Record inserted successfully.", "insertedRecord": user.ops[0]});
               }
@@ -316,7 +291,8 @@ router.post('/insert',function(req, res, next){
 // localhost:3000/courses/active/:id
 router.put('/active/:id', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Course');
       var id = req.params.id;
       var activate = req.body.isActive;
@@ -325,9 +301,8 @@ router.put('/active/:id', function(req, res, next){
         {_id: ObjectId(id)},
         {$set: {isActive:activate}},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Active status changed successfully."});
             }
         });
@@ -349,7 +324,8 @@ router.put('/update/:id', function(req, res, next){
       BTECH_sem = Object.keys(req.body.pr.BTECH);
   }
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Course');
       var id = req.params.id;
       var updatedRecord = {
@@ -372,9 +348,8 @@ router.put('/update/:id', function(req, res, next){
         {_id: ObjectId(id)},
         {$set: updatedRecord},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record updated successfully."});
             }
         });
@@ -386,16 +361,16 @@ router.put('/update/:id', function(req, res, next){
 // localhost:3000/courses/delete/:id
 router.delete('/delete/:id', function(req,res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Course');
       var id = req.params.id;
 
       console.log(id);
       collection.remove({_id: ObjectId(id)},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record deleted successfully."});
             }
         });

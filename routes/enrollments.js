@@ -9,12 +9,11 @@ var ObjectId = require('mongodb').ObjectID;
 // localhost:3000/enrollments
 router.get('/', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Enrollment');
       collection.find().toArray(function(err, record) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":record});
         }
@@ -26,13 +25,12 @@ router.get('/', function(req, res, next) {
 // localhost:3000/enrollments/getByStd/:id
 router.get('/getByStd/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Enrollment');
 
       collection.find({"userId": new ObjectId(req.params.id)}).toArray(function(err, record) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           if(record) {
             collection = db.collection('Course');
@@ -41,9 +39,7 @@ router.get('/getByStd/:id',function(req, res, next){
               course_ids[i]=record[i].courseId;
             }
             collection.find({ "_id": { $in: course_ids } }).toArray(function(err, course) {
-              if(err) {
-                res.json({"Status":false,"Result":err});
-              }
+              if(err) throw err;
               else {
                 res.send({"Status":true,"Result":course});
               }
@@ -61,13 +57,12 @@ router.get('/getByStd/:id',function(req, res, next){
 // localhost:3000/enrollments/getByCourse/:id
 router.get('/getByCourse/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Enrollment');
 
       collection.find({"courseId": new ObjectId(req.params.id)}).toArray(function(err, record) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           if(record) {
             res.send({"Status":true,"Result":record});
@@ -86,16 +81,15 @@ router.get('/getByCourse/:id',function(req, res, next){
 // localhost:3000/enrollments/insert
 router.post('/insert',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Enrollment');
 
     	collection.insert({
         userId: ObjectId(req.body.userId),
         courseId: ObjectId(req.body.courseId)
       }, function(err, record) {
-    		if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+    		if (err) throw err;
         else {
           res.send({"Status":true,"Result":"Record inserted successfully.", "insertedRecord": record.ops[0]});
         }
@@ -108,7 +102,8 @@ router.post('/insert',function(req, res, next){
 // localhost:3000/enrollments/update/:id
 router.put('/update/:id', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Enrollment');
       var id = req.params.id;
       var updatedRecord = req.body;
@@ -117,9 +112,8 @@ router.put('/update/:id', function(req, res, next){
         {_id: ObjectId(id)},
         {$set: updatedRecord},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record updated successfully."});
             }
         });
@@ -131,16 +125,16 @@ router.put('/update/:id', function(req, res, next){
 // localhost:3000/enrollments/delete/:id
 router.delete('/delete/:id', function(req,res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Enrollment');
       var id = req.params.id;
 
       console.log(id);
       collection.remove({_id: ObjectId(id)},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record deleted successfully."});
             }
         });

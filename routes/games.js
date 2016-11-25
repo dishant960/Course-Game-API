@@ -9,13 +9,12 @@ var ObjectId = require('mongodb').ObjectID;
 // localhost:3000/games
 router.get('/', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Game');
 
       collection.find().toArray(function(err, games) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":games});
         }
@@ -28,13 +27,12 @@ router.get('/', function(req, res, next) {
 // localhost:3000/games
 router.get('/list', function(req, res, next) {
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('GameList');
 
       collection.find().toArray(function(err, gamesList) {
-        if (err) {
-          res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":gamesList});
         }
@@ -47,14 +45,13 @@ router.get('/list', function(req, res, next) {
 // localhost:3000/games/getById/:id
 router.get('/getById/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Game');
       var id = req.params.id;
 
       collection.findOne({"_id": new ObjectId(id)}, function(err, game) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":game});
         }
@@ -66,13 +63,12 @@ router.get('/getById/:id',function(req, res, next){
 // localhost:3000/games/getByTopic/:id
 router.get('/getByTopic/:id',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Game');
 
       collection.find({topicId: req.params.id}).toArray(function(err, record) {
-        if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":record});
         }
@@ -85,7 +81,8 @@ router.get('/getByTopic/:id',function(req, res, next){
 // localhost:3000/games/insert
 router.post('/list/insert',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('GameList');
       var game = req.body;
 
@@ -93,9 +90,7 @@ router.post('/list/insert',function(req, res, next){
         title: req.body.title,
         link: req.body.link
     }, function(err, gameList) {
-    		if (err) {
-    		  res.json({"Status":false,"Result":err});
-        }
+    		if (err) throw err;
         else {
           res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": gameList.ops[0]});
         }
@@ -108,7 +103,8 @@ router.post('/list/insert',function(req, res, next){
 // localhost:3000/games/insert
 router.post('/insert',function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Game');
       var game = req.body;
 
@@ -122,13 +118,11 @@ router.post('/insert',function(req, res, next){
         minScore: req.body.minScore,
         desc: req.body.desc,
         hintUrl: req.body.hintUrl,
-        gameLink: req.body.gameLink,
         isActive: req.body.isActive,
-        topicId: ObjectId(req.body.topicId)
+        topicId: ObjectId(req.body.topicId),
+        gameId: ObjectId(req.body.gameId)
     }, function(err, game) {
-        if (err) {
-          res.json({"Status":false,"Result":err});
-        }
+        if (err) throw err;
         else {
           res.send({"Status":true,"Result":"Record inserted successfully.", "insertedUser": game.ops[0]});
         }
@@ -140,7 +134,8 @@ router.post('/insert',function(req, res, next){
 // localhost:3000/games/update/:id
 router.put('/update/:id', function(req, res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Game');
       var id = req.params.id;
       var updatedGame = req.body;
@@ -149,9 +144,8 @@ router.put('/update/:id', function(req, res, next){
         {_id: ObjectId(id)},
         {$set: updatedGame},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record updated successfully."});
             }
         });
@@ -162,16 +156,15 @@ router.put('/update/:id', function(req, res, next){
 // localhost:3000/games/delete/:id
 router.delete('/delete/:id', function(req,res, next){
   MongoClient.connect(connectionString, function(err, db) {
-    if(!err) {
+    if(err) throw err;
+    else {
       var collection = db.collection('Game');
       var id = req.params.id;
 
-      console.log(id);
       collection.remove({_id: ObjectId(id)},
         function(err, object) {
-            if (err){
-                res.json({"Status":false, "Result":err});
-            }else{
+            if (err) throw err;
+            else {
                 res.json({"Status":true, "Result":"Record deleted successfully."});
             }
         });
