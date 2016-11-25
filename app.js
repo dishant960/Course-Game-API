@@ -40,7 +40,7 @@ var app = express();
     {
       var file = req.params.file;
       console.log(__dirname);
-      var path =__dirname+'/public/'+file;
+      var path =__dirname+'/uploads/'+file;
       res.download(path);
     });
 
