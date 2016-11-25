@@ -58,24 +58,14 @@ router.get('/getById/:id',function(req, res, next){
               for(var i = 0; i < topic.length; i++) {
                 topic_ids[i]=topic[i]._id;
               }
-              collection.find({ "topicId": { $in: topic_ids } }).toArray(function(err, games) {
+              collection.find().toArray(function(err, games) {
                 if (err) throw err;
                 else {
-                  collection = db.collection('GameList');
-                  var gameList_ids = [];
-                  for(var i = 0; i < games.length; i++) {
-                    gameList_ids[i]=games[i].gameId;
-                  }
-                  collection.find({ _id: { $in: gameList_ids } }).toArray(function(err, gameList) {
+                  collection = db.collection('Material');
+                  collection.find({ topicId: { $in: topic_ids } }).toArray(function(err, materials) {
                     if (err) throw err;
                     else {
-                      collection = db.collection('Material');
-                      collection.find({ topicId: { $in: topic_ids } }).toArray(function(err, materials) {
-                        if (err) throw err;
-                        else {
-                          res.send({"Status":true, "course":course, "topics": topic, "games": games, "GameList": gameList, "materials": materials});
-                        }
-                      });
+                      res.send({"Status":true, "course":course, "topics": topic, "games": games, "materials": materials});
                     }
                   });
                 }
